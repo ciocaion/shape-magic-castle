@@ -59,7 +59,6 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
-          disabled={filledCount === 0}
         >
           3D View ({filledCount}/{slots.length})
         </button>
