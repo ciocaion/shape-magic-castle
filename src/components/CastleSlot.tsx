@@ -35,7 +35,7 @@ export const CastleSlot: React.FC<CastleSlotProps> = ({ slot, onShapeDrop, hasEr
   const getSlotContent = () => {
     if (slot.filled) {
       return (
-        <div className="relative animate-bounce-in">
+        <div className="relative animate-gentle-bounce">
           <DraggableShape 
             type={slot.type} 
             size="medium" 
@@ -43,22 +43,22 @@ export const CastleSlot: React.FC<CastleSlotProps> = ({ slot, onShapeDrop, hasEr
           />
           {slot.showSymmetry && (
             <div className="absolute inset-0 pointer-events-none">
-              {/* Symmetry line animation */}
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary-glow animate-glow-pulse opacity-60" />
-              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary-glow animate-glow-pulse opacity-60" />
+              {/* Gentle symmetry line animation */}
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary opacity-40 animate-soft-glow" />
+              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary opacity-40 animate-soft-glow" />
             </div>
           )}
         </div>
       );
     }
 
-    // Empty slot with glowing outline
+    // Empty slot with gentle glowing outline
     return (
       <div className={`
         w-16 h-16 border-2 border-dashed rounded-lg flex items-center justify-center
-        transition-all duration-300
-        ${isDragOver ? 'border-success bg-success/20 animate-glow-pulse' : 'border-primary/60 animate-glow-pulse'}
-        ${hasError ? 'border-error bg-error/20 animate-shake' : ''}
+        transition-all duration-300 min-w-[44px] min-h-[44px]
+        ${isDragOver ? 'border-success bg-success/10 animate-soft-glow' : 'border-primary/40 animate-gentle-float'}
+        ${hasError ? 'border-error bg-error/10 animate-subtle-shake' : ''}
       `}>
         {/* Shape hint outline */}
         <div className="opacity-30">

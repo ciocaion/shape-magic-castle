@@ -83,10 +83,10 @@ export const ComparisonTask: React.FC<ComparisonTaskProps> = ({ question, onComp
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center bg-gradient-magic/20 rounded-3xl m-8 p-8">
-      <div className="bg-card/90 backdrop-blur-sm rounded-2xl p-8 shadow-magic max-w-md w-full text-center">
+    <div className="flex-1 flex flex-col items-center justify-center p-8">
+      <div className="bg-card rounded-gradeaid p-8 shadow-gradeaid border-l-[10px] border-b-[10px] border-foreground max-w-md w-full text-center">
         {/* Task indicator */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-8">
           {getTaskIcon()}
         </div>
 
@@ -96,8 +96,10 @@ export const ComparisonTask: React.FC<ComparisonTaskProps> = ({ question, onComp
             <button
               key={index}
               onClick={() => handleShapeClick(index)}
-              className="transform hover:scale-110 transition-all duration-300 hover:shadow-glow
-                         active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/50 rounded-2xl p-4"
+              className="transform hover:scale-105 transition-all duration-300 hover:shadow-gentle
+                         active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/50 rounded-2xl p-4
+                         min-w-[44px] min-h-[44px]"
+              aria-label={`Select ${shape.type} shape`}
             >
               <DraggableShape
                 type={shape.type}
@@ -110,7 +112,7 @@ export const ComparisonTask: React.FC<ComparisonTaskProps> = ({ question, onComp
 
         {/* Visual hint */}
         <div className="text-center text-muted-foreground">
-          <div className="w-8 h-8 mx-auto bg-primary/20 rounded-full animate-glow-pulse" />
+          <div className="w-8 h-8 mx-auto bg-primary/20 rounded-full animate-soft-glow" />
         </div>
       </div>
     </div>

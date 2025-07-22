@@ -26,11 +26,11 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
 
   const shapeColors = {
     square: 'bg-shape-square',
-    rectangle: 'bg-shape-rectangle',
-    triangle: 'bg-shape-triangle',
+    rectangle: 'bg-shape-rectangle', 
+    triangle: '',
     circle: 'bg-shape-circle',
-    star: 'bg-shape-star',
-    heart: 'bg-shape-heart'
+    star: '',
+    heart: ''
   };
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -44,36 +44,42 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   };
 
   const renderShape = () => {
-    const baseClasses = `${sizeClasses[size]} ${shapeColors[type]} cursor-pointer select-none relative
+    const baseClasses = `${sizeClasses[size]} cursor-pointer select-none relative
       ${isDragging ? 'opacity-50' : 'opacity-100'} 
-      ${is3D ? 'animate-transform-3d shadow-shape' : ''} 
-      transition-all duration-300 hover:shadow-glow`;
+      ${is3D ? 'animate-transform-to-3d' : ''} 
+      transition-all duration-300 hover:shadow-gentle min-w-[44px] min-h-[44px]`;
 
     switch (type) {
       case 'square':
         return (
-          <div className={`${baseClasses} rounded-lg`}>
+          <div className={`${baseClasses} ${shapeColors[type]} rounded-lg`} aria-label="Square shape">
             {is3D && (
-              <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-lg" />
+              <>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-lg" />
+                <div className="absolute -top-1 -left-1 w-full h-full bg-shape-square/60 rounded-lg -z-10" />
+              </>
             )}
           </div>
         );
       
       case 'rectangle':
         return (
-          <div className={`${baseClasses} rounded-lg`} style={{ aspectRatio: '3/2' }}>
+          <div className={`${baseClasses} ${shapeColors[type]} rounded-lg`} style={{ aspectRatio: '3/2' }} aria-label="Rectangle shape">
             {is3D && (
-              <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-lg" />
+              <>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-lg" />
+                <div className="absolute -top-1 -left-1 w-full h-full bg-shape-rectangle/60 rounded-lg -z-10" />
+              </>
             )}
           </div>
         );
       
       case 'triangle':
         return (
-          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`}>
+          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`} aria-label="Triangle shape">
             <div 
               className={`w-0 h-0 ${isDragging ? 'opacity-50' : 'opacity-100'} 
-                transition-all duration-300 hover:drop-shadow-glow`}
+                transition-all duration-300 hover:drop-shadow-lg relative`}
               style={{
                 borderLeft: size === 'small' ? '24px solid transparent' : 
                            size === 'medium' ? '32px solid transparent' : '40px solid transparent',
@@ -82,46 +88,82 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
                 borderBottom: size === 'small' ? '48px solid hsl(var(--shape-triangle))' : 
                              size === 'medium' ? '64px solid hsl(var(--shape-triangle))' : 
                              '80px solid hsl(var(--shape-triangle))',
-                filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 8px rgba(0,0,0,0.3))' : 'none'
+                filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.3))' : 'none'
               }}
             />
+            {is3D && (
+              <div 
+                className="absolute w-0 h-0 -top-1 -left-1 opacity-60"
+                style={{
+                  borderLeft: size === 'small' ? '24px solid transparent' : 
+                             size === 'medium' ? '32px solid transparent' : '40px solid transparent',
+                  borderRight: size === 'small' ? '24px solid transparent' : 
+                              size === 'medium' ? '32px solid transparent' : '40px solid transparent',
+                  borderBottom: size === 'small' ? '48px solid hsl(var(--shape-triangle))' : 
+                               size === 'medium' ? '64px solid hsl(var(--shape-triangle))' : 
+                               '80px solid hsl(var(--shape-triangle))',
+                  filter: 'brightness(0.8)'
+                }}
+              />
+            )}
           </div>
         );
       
       case 'circle':
         return (
-          <div className={`${baseClasses} rounded-full`}>
+          <div className={`${baseClasses} ${shapeColors[type]} rounded-full`} aria-label="Circle shape">
             {is3D && (
-              <div className="absolute inset-0 bg-gradient-radial from-white/40 to-transparent rounded-full" />
+              <>
+                <div className="absolute inset-0 bg-gradient-radial from-white/40 to-transparent rounded-full" />
+                <div className="absolute -top-1 -left-1 w-full h-full bg-shape-circle/60 rounded-full -z-10" />
+              </>
             )}
           </div>
         );
       
       case 'star':
         return (
-          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`}>
+          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`} aria-label="Star shape">
             <svg 
               viewBox="0 0 24 24" 
               className={`w-full h-full fill-current text-shape-star ${isDragging ? 'opacity-50' : 'opacity-100'} 
-                transition-all duration-300 hover:drop-shadow-glow`}
-              style={{ filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 8px rgba(0,0,0,0.3))' : 'none' }}
+                transition-all duration-300 hover:drop-shadow-lg`}
+              style={{ filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.3))' : 'none' }}
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
+            {is3D && (
+              <svg 
+                viewBox="0 0 24 24" 
+                className="absolute -top-1 -left-1 w-full h-full fill-current text-shape-star opacity-60 -z-10"
+                style={{ filter: 'brightness(0.8)' }}
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            )}
           </div>
         );
       
       case 'heart':
         return (
-          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`}>
+          <div className={`relative ${sizeClasses[size]} cursor-pointer select-none`} aria-label="Heart shape">
             <svg 
               viewBox="0 0 24 24" 
               className={`w-full h-full fill-current text-shape-heart ${isDragging ? 'opacity-50' : 'opacity-100'} 
-                transition-all duration-300 hover:drop-shadow-glow`}
-              style={{ filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 8px rgba(0,0,0,0.3))' : 'none' }}
+                transition-all duration-300 hover:drop-shadow-lg`}
+              style={{ filter: is3D ? 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.3))' : 'none' }}
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
+            {is3D && (
+              <svg 
+                viewBox="0 0 24 24" 
+                className="absolute -top-1 -left-1 w-full h-full fill-current text-shape-heart opacity-60 -z-10"
+                style={{ filter: 'brightness(0.8)' }}
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            )}
           </div>
         );
       

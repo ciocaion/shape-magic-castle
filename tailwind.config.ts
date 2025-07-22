@@ -88,22 +88,21 @@ export default {
 			},
 			// Magical Gradients
 			backgroundImage: {
-				'gradient-magic': 'var(--gradient-magic)',
 				'gradient-castle': 'var(--gradient-castle)',
-				'gradient-success': 'var(--gradient-success)',
-				'gradient-glow': 'var(--gradient-glow)'
+				'gradient-success': 'var(--gradient-success)'
 			},
-			// Magical Box Shadows
+			// GradeAid Shadows
 			boxShadow: {
-				'magic': 'var(--shadow-magic)',
-				'castle': 'var(--shadow-castle)',
-				'shape': 'var(--shadow-shape)',
-				'glow': 'var(--shadow-glow)'
+				'gradeaid': 'var(--shadow-gradeaid)',
+				'gentle': 'var(--shadow-gentle)',
+				'card': 'var(--shadow-card)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'gradeaid': 'var(--radius)', /* 50px cards */
+				'gradeaid-button': 'var(--radius-button)' /* 100px buttons */
 			},
 			keyframes: {
 				'accordion-down': {
@@ -114,69 +113,57 @@ export default {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: '0' }
 				},
-				// Magical Game Animations
-				'float': {
+				// Gentle Game Animations (Neurodivergent-Friendly)
+				'gentle-float': {
 					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
+					'50%': { transform: 'translateY(-5px)' }
 				},
-				'glow-pulse': {
+				'soft-glow': {
 					'0%, 100%': { 
-						boxShadow: '0 0 20px hsl(280 90% 75% / 0.4)',
+						boxShadow: '0 4px 20px rgba(47, 46, 65, 0.15)',
 						transform: 'scale(1)'
 					},
 					'50%': { 
-						boxShadow: '0 0 40px hsl(280 90% 75% / 0.8)',
-						transform: 'scale(1.05)'
+						boxShadow: '0 8px 30px rgba(47, 46, 65, 0.25)',
+						transform: 'scale(1.02)'
 					}
 				},
-				'sparkle': {
-					'0%': { opacity: '0', transform: 'scale(0) rotate(0deg)' },
-					'50%': { opacity: '1', transform: 'scale(1) rotate(180deg)' },
-					'100%': { opacity: '0', transform: 'scale(0) rotate(360deg)' }
-				},
-				'bounce-in': {
-					'0%': { transform: 'scale(0)', opacity: '0' },
-					'50%': { transform: 'scale(1.1)', opacity: '0.8' },
+				'gentle-bounce': {
+					'0%': { transform: 'scale(0.95)', opacity: '0' },
+					'50%': { transform: 'scale(1.02)', opacity: '0.8' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
 				},
-				'shake': {
+				'subtle-shake': {
 					'0%, 100%': { transform: 'translateX(0)' },
-					'25%': { transform: 'translateX(-5px)' },
-					'75%': { transform: 'translateX(5px)' }
+					'25%': { transform: 'translateX(-2px)' },
+					'75%': { transform: 'translateX(2px)' }
 				},
-				'transform-3d': {
+				'transform-to-3d': {
 					'0%': { 
-						transform: 'perspective(200px) rotateX(0deg) rotateY(0deg)',
+						transform: 'perspective(400px) rotateX(0deg) rotateY(0deg)',
 						filter: 'brightness(1)'
 					},
-					'50%': { 
-						transform: 'perspective(200px) rotateX(10deg) rotateY(10deg) scale(1.1)',
-						filter: 'brightness(1.2)'
-					},
 					'100%': { 
-						transform: 'perspective(200px) rotateX(5deg) rotateY(5deg)',
-						filter: 'brightness(1.1)'
+						transform: 'perspective(400px) rotateX(5deg) rotateY(5deg)',
+						filter: 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.3))'
 					}
 				},
-				'celebration': {
-					'0%': { transform: 'scale(1) rotate(0deg)', opacity: '1' },
-					'25%': { transform: 'scale(1.2) rotate(90deg)', opacity: '0.8' },
-					'50%': { transform: 'scale(1.1) rotate(180deg)', opacity: '0.9' },
-					'75%': { transform: 'scale(1.3) rotate(270deg)', opacity: '0.7' },
-					'100%': { transform: 'scale(1) rotate(360deg)', opacity: '1' }
+				'celebration-gentle': {
+					'0%': { transform: 'scale(1)', opacity: '1' },
+					'50%': { transform: 'scale(1.1)', opacity: '0.9' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				// Magical Game Animations
-				'float': 'float 3s ease-in-out infinite',
-				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
-				'sparkle': 'sparkle 1s ease-in-out',
-				'bounce-in': 'bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-				'shake': 'shake 0.5s ease-in-out',
-				'transform-3d': 'transform-3d 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-				'celebration': 'celebration 2s ease-in-out infinite'
+				// Gentle Game Animations
+				'gentle-float': 'gentle-float 4s ease-in-out infinite',
+				'soft-glow': 'soft-glow 3s ease-in-out infinite',
+				'gentle-bounce': 'gentle-bounce 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+				'subtle-shake': 'subtle-shake 0.4s ease-in-out',
+				'transform-to-3d': 'transform-to-3d 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'celebration-gentle': 'celebration-gentle 1.5s ease-in-out infinite'
 			}
 		}
 	},

@@ -122,13 +122,13 @@ export const ShapeShifterCastle: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-castle flex flex-col relative overflow-hidden">
-      {/* Background magical elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-4 h-4 bg-primary rounded-full animate-sparkle" 
+      {/* Gentle background elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-3 h-3 bg-primary rounded-full animate-gentle-float" 
              style={{ animationDelay: '0s' }} />
-        <div className="absolute top-20 right-20 w-3 h-3 bg-shape-star rounded-full animate-sparkle" 
+        <div className="absolute top-20 right-20 w-2 h-2 bg-secondary rounded-full animate-gentle-float" 
              style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-32 left-1/4 w-5 h-5 bg-shape-heart rounded-full animate-sparkle" 
+        <div className="absolute bottom-32 left-1/4 w-4 h-4 bg-accent rounded-full animate-gentle-float" 
              style={{ animationDelay: '2s' }} />
       </div>
 
@@ -136,7 +136,7 @@ export const ShapeShifterCastle: React.FC = () => {
       <ProgressBar
         completed={gameState.completedSlots}
         total={gameState.totalSlots}
-        className="m-4"
+        className="m-6"
       />
 
       {/* Main Game Area */}
@@ -158,7 +158,7 @@ export const ShapeShifterCastle: React.FC = () => {
 
       {/* Shape Palette */}
       {gameState.currentTask === 'building' && (
-        <ShapePalette className="mx-4 mb-4" />
+        <ShapePalette className="mx-6 mb-6" />
       )}
     </div>
   );
