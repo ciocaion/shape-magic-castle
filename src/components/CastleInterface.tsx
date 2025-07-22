@@ -11,7 +11,8 @@ interface CastleInterfaceProps {
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShapePlaced }) => {
   const [dragError, setDragError] = useState<string | null>(null);
-  const [view3D, setView3D] = useState(false);
+  const allSlotsCompleted = slots.every(slot => slot.filled);
+  const [view3D, setView3D] = useState(allSlotsCompleted);
 
   const handleShapeDrop = (slotId: string, shapeType: ShapeType) => {
     const slot = slots.find(s => s.id === slotId);
@@ -20,16 +21,18 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     if (slot.type === shapeType && !slot.filled) {
       onShapePlaced(slotId, shapeType);
       setDragError(null);
-      // Only show 3D view when all shapes are completed
-      const filledCount = slots.filter(s => s.filled).length;
-      if (filledCount + 1 >= slots.length) {
-        setView3D(true);
-      }
     } else {
       setDragError(slotId);
       setTimeout(() => setDragError(null), 500);
     }
   };
+
+  // Auto-switch to 3D view when all slots are completed
+  React.useEffect(() => {
+    if (allSlotsCompleted) {
+      setView3D(true);
+    }
+  }, [allSlotsCompleted]);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
