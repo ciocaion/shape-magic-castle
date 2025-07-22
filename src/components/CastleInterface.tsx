@@ -11,6 +11,7 @@ interface CastleInterfaceProps {
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShapePlaced }) => {
   const [dragError, setDragError] = useState<string | null>(null);
+  const [view3D, setView3D] = useState(false);
 
   // Calculate if all slots are completed
   const allSlotsCompleted = slots.every(slot => slot.filled);
@@ -20,6 +21,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     allSlotsCompleted, 
     filledCount, 
     totalSlots: slots.length,
+    view3D,
     slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled, type: s.type }))
   });
 
@@ -38,27 +40,45 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* Show completion message when all done */}
-      {allSlotsCompleted && (
-        <div className="mb-4 px-6 py-3 bg-green-500/20 rounded-lg border border-green-400/40">
-          <span className="text-green-300 font-mono text-xl tracking-wider">🎉 CASTLE COMPLETED! 🎉</span>
-        </div>
-      )}
+      {/* View Toggle */}
+      <div className="mb-4 flex gap-2">
+        <button
+          onClick={() => setView3D(false)}
+          className={`px-4 py-2 rounded-lg transition-all ${
+            !view3D 
+              ? 'bg-primary text-primary-foreground' 
+              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+          }`}
+        >
+          Blueprint View
+        </button>
+        <button
+          onClick={() => setView3D(true)}
+          className={`px-4 py-2 rounded-lg transition-all ${
+            view3D 
+              ? 'bg-primary text-primary-foreground' 
+              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+          }`}
+          disabled={filledCount === 0}
+        >
+          3D View ({filledCount}/{slots.length})
+        </button>
+      </div>
 
       <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
-        {allSlotsCompleted ? (
-          /* 3D Scene View - Show only when completed */
+        {view3D ? (
+          /* 3D Scene View */
           <div className="absolute inset-0">
             <ThreeDCastleScene slots={slots} />
             {/* 3D View Overlay */}
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">
-                COMPLETED CASTLE - 3D VIEW
+                3D CASTLE VIEW
               </span>
             </div>
           </div>
         ) : (
-          /* Blueprint View - Show while building */
+          /* Blueprint View */
           <>
             {/* Blueprint Construction Grid */}
             <div 
