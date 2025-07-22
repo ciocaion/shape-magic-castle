@@ -86,10 +86,11 @@ export default {
 				error: 'hsl(var(--error))',
 				'error-foreground': 'hsl(var(--error-foreground))'
 			},
-			// Magical Gradients
+			// Blueprint and magical gradients
 			backgroundImage: {
-				'gradient-castle': 'var(--gradient-castle)',
-				'gradient-success': 'var(--gradient-success)'
+				'gradient-blueprint': 'var(--gradient-blueprint)',
+				'gradient-success': 'var(--gradient-success)',
+				'blueprint-grid': 'var(--blueprint-grid)'
 			},
 			// GradeAid Shadows
 			boxShadow: {
@@ -138,14 +139,88 @@ export default {
 					'25%': { transform: 'translateX(-2px)' },
 					'75%': { transform: 'translateX(2px)' }
 				},
-				'transform-to-3d': {
+				// Blueprint WOW Transformations
+				'triangle-to-pyramid': {
 					'0%': { 
-						transform: 'perspective(400px) rotateX(0deg) rotateY(0deg)',
-						filter: 'brightness(1)'
+						transform: 'perspective(400px) rotateX(0deg) scale(1)',
+						filter: 'brightness(1)',
+						boxShadow: 'none'
+					},
+					'50%': { 
+						transform: 'perspective(400px) rotateX(-15deg) scale(1.1)',
+						filter: 'brightness(1.2)',
+						boxShadow: '0 8px 20px rgba(47, 46, 65, 0.3)'
 					},
 					'100%': { 
-						transform: 'perspective(400px) rotateX(5deg) rotateY(5deg)',
-						filter: 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.3))'
+						transform: 'perspective(400px) rotateX(-10deg) rotateY(5deg) scale(1)',
+						filter: 'brightness(1.1) drop-shadow(4px 4px 12px rgba(47, 46, 65, 0.4))',
+						boxShadow: '0 6px 16px rgba(47, 46, 65, 0.25)'
+					}
+				},
+				'circle-to-sphere': {
+					'0%': { 
+						transform: 'scale(1)',
+						filter: 'brightness(1)',
+						borderRadius: '50%'
+					},
+					'50%': { 
+						transform: 'scale(1.2)',
+						filter: 'brightness(1.3)',
+						borderRadius: '50%'
+					},
+					'100%': { 
+						transform: 'scale(1)',
+						filter: 'brightness(1.1) drop-shadow(0 0 15px rgba(47, 46, 65, 0.3))',
+						borderRadius: '50%',
+						boxShadow: 'inset -6px -6px 12px rgba(0, 0, 0, 0.2), inset 6px 6px 12px rgba(255, 255, 255, 0.1)'
+					}
+				},
+				'star-symmetry-reveal': {
+					'0%': { 
+						transform: 'rotate(0deg) scale(1)',
+						filter: 'brightness(1)'
+					},
+					'50%': { 
+						transform: 'rotate(180deg) scale(1.1)',
+						filter: 'brightness(1.3)'
+					},
+					'100%': { 
+						transform: 'rotate(360deg) scale(1)',
+						filter: 'brightness(1.1) drop-shadow(0 0 20px rgba(47, 46, 65, 0.4))'
+					}
+				},
+				'heart-mirror-reveal': {
+					'0%': { 
+						transform: 'scale(1)',
+						filter: 'brightness(1)'
+					},
+					'50%': { 
+						transform: 'scale(1.1)',
+						filter: 'brightness(1.2)'
+					},
+					'100%': { 
+						transform: 'scale(1)',
+						filter: 'brightness(1.1)'
+					}
+				},
+				'symmetry-line-appear': {
+					'0%': { 
+						opacity: '0',
+						transform: 'scaleY(0)'
+					},
+					'100%': { 
+						opacity: '0.7',
+						transform: 'scaleY(1)'
+					}
+				},
+				'blueprint-pulse': {
+					'0%, 100%': { 
+						boxShadow: '0 0 10px hsl(220 40% 50% / 0.3)',
+						transform: 'scale(1)'
+					},
+					'50%': { 
+						boxShadow: '0 0 20px hsl(220 40% 50% / 0.6)',
+						transform: 'scale(1.05)'
 					}
 				},
 				'celebration-gentle': {
@@ -162,8 +237,14 @@ export default {
 				'soft-glow': 'soft-glow 3s ease-in-out infinite',
 				'gentle-bounce': 'gentle-bounce 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
 				'subtle-shake': 'subtle-shake 0.4s ease-in-out',
-				'transform-to-3d': 'transform-to-3d 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-				'celebration-gentle': 'celebration-gentle 1.5s ease-in-out infinite'
+				'celebration-gentle': 'celebration-gentle 1.5s ease-in-out infinite',
+				// Blueprint WOW Animations
+				'triangle-to-pyramid': 'triangle-to-pyramid 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'circle-to-sphere': 'circle-to-sphere 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'star-symmetry-reveal': 'star-symmetry-reveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'heart-mirror-reveal': 'heart-mirror-reveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'symmetry-line-appear': 'symmetry-line-appear 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+				'blueprint-pulse': 'blueprint-pulse 2s ease-in-out infinite'
 			}
 		}
 	},

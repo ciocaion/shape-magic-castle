@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CastleSlot } from './CastleSlot';
+import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
@@ -25,20 +25,29 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   return (
     <div className="flex-1 flex items-center justify-center p-8">
-      <div className="relative w-full max-w-4xl h-96 mx-auto">
-        {/* Castle Base */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-80 h-40 bg-castle-stone rounded-t-3xl shadow-castle" />
+      <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
+        {/* Blueprint Construction Grid */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: 'var(--blueprint-grid)',
+            backgroundSize: '30px 30px'
+          }}
+        />
         
-        {/* Main Tower */}
-        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-castle-tower rounded-t-2xl shadow-castle" />
+        {/* Blueprint Title Banner */}
+        <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
+          <span className="text-cyan-300 font-mono text-sm tracking-wider">CASTLE CONSTRUCTION BLUEPRINT</span>
+        </div>
         
-        {/* Side Towers */}
-        <div className="absolute bottom-0 left-8 w-20 h-32 bg-castle-tower rounded-t-2xl shadow-castle" />
-        <div className="absolute bottom-0 right-8 w-20 h-32 bg-castle-tower rounded-t-2xl shadow-castle" />
+        {/* Blueprint revision marker */}
+        <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
+          <span className="text-cyan-400 font-mono text-xs">REV 001</span>
+        </div>
 
-        {/* Render Castle Slots */}
+        {/* Render Blueprint Castle Slots */}
         {slots.map((slot) => (
-          <CastleSlot
+          <BlueprintCastleSlot
             key={slot.id}
             slot={slot}
             onShapeDrop={handleShapeDrop}
@@ -46,13 +55,16 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
           />
         ))}
 
-        {/* Magical sparkles around the castle */}
-        <div className="absolute top-4 left-1/4 w-2 h-2 bg-primary-glow rounded-full animate-sparkle" 
-             style={{ animationDelay: '0.5s' }} />
-        <div className="absolute top-8 right-1/3 w-3 h-3 bg-accent rounded-full animate-sparkle" 
-             style={{ animationDelay: '1.5s' }} />
-        <div className="absolute bottom-20 left-1/3 w-2 h-2 bg-shape-star rounded-full animate-sparkle" 
-             style={{ animationDelay: '2.5s' }} />
+        
+        {/* Blueprint measurement lines */}
+        <div className="absolute inset-0 pointer-events-none opacity-10">
+          <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-400" />
+          <div className="absolute top-1/2 left-0 right-0 h-px bg-cyan-400" />
+          <div className="absolute top-3/4 left-0 right-0 h-px bg-cyan-400" />
+          <div className="absolute left-1/4 top-0 bottom-0 w-px bg-cyan-400" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-400" />
+          <div className="absolute left-3/4 top-0 bottom-0 w-px bg-cyan-400" />
+        </div>
       </div>
     </div>
   );

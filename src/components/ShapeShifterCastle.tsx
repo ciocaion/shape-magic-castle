@@ -27,21 +27,27 @@ export interface GameState {
 }
 
 const initialSlots: CastleSlot[] = [
-  // Castle windows (squares)
-  { id: 'window-1', type: 'square', position: { x: 20, y: 40 }, filled: false, showSymmetry: false },
-  { id: 'window-2', type: 'square', position: { x: 80, y: 40 }, filled: false, showSymmetry: false },
-  // Castle door (rectangle)
-  { id: 'door', type: 'rectangle', position: { x: 50, y: 70 }, filled: false, showSymmetry: false },
-  // Castle towers (circles)
-  { id: 'tower-1', type: 'circle', position: { x: 15, y: 20 }, filled: false, showSymmetry: false },
-  { id: 'tower-2', type: 'circle', position: { x: 85, y: 20 }, filled: false, showSymmetry: false },
-  // Castle roofs (triangles)
-  { id: 'roof-1', type: 'triangle', position: { x: 15, y: 10 }, filled: false, showSymmetry: false },
-  { id: 'roof-2', type: 'triangle', position: { x: 50, y: 5 }, filled: false, showSymmetry: false },
-  { id: 'roof-3', type: 'triangle', position: { x: 85, y: 10 }, filled: false, showSymmetry: false },
-  // Decorative elements
-  { id: 'star-1', type: 'star', position: { x: 30, y: 15 }, filled: false, showSymmetry: false },
-  { id: 'heart-1', type: 'heart', position: { x: 70, y: 15 }, filled: false, showSymmetry: false },
+  // Blueprint Castle Design - Precisely positioned for architectural learning
+  
+  // Symmetrical Roof Triangles (Top Left/Right) - Bilateral Symmetry Learning
+  { id: 'roof-left', type: 'triangle', position: { x: 25, y: 15 }, filled: false, showSymmetry: false },
+  { id: 'roof-right', type: 'triangle', position: { x: 75, y: 15 }, filled: false, showSymmetry: false },
+  
+  // Central Star Crest (Top Center) - Rotational Symmetry Learning
+  { id: 'star-crest', type: 'star', position: { x: 50, y: 12 }, filled: false, showSymmetry: false },
+  
+  // Symmetrical Heart Gate (Top Right) - Mirroring Concept
+  { id: 'heart-gate', type: 'heart', position: { x: 65, y: 25 }, filled: false, showSymmetry: false },
+  
+  // Twin Purple Tower Foundations (Mid-Level) - 2D to 3D Circle to Sphere
+  { id: 'tower-left', type: 'circle', position: { x: 20, y: 35 }, filled: false, showSymmetry: false },
+  { id: 'tower-right', type: 'circle', position: { x: 80, y: 35 }, filled: false, showSymmetry: false },
+  
+  // Central Grand Dome Foundation (Bottom Center) - Grand 2D to 3D Transformation
+  { id: 'grand-dome', type: 'circle', position: { x: 50, y: 60 }, filled: false, showSymmetry: false },
+  
+  // Entrance Portal (Rectangle) - Completing the blueprint
+  { id: 'entrance', type: 'rectangle', position: { x: 50, y: 75 }, filled: false, showSymmetry: false },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
@@ -121,15 +127,22 @@ export const ShapeShifterCastle: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-castle flex flex-col relative overflow-hidden">
-      {/* Gentle background elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-3 h-3 bg-primary rounded-full animate-gentle-float" 
-             style={{ animationDelay: '0s' }} />
-        <div className="absolute top-20 right-20 w-2 h-2 bg-secondary rounded-full animate-gentle-float" 
-             style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-32 left-1/4 w-4 h-4 bg-accent rounded-full animate-gentle-float" 
-             style={{ animationDelay: '2s' }} />
+    <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
+      {/* Blueprint Construction Grid Background */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: 'var(--blueprint-grid)',
+          backgroundSize: '40px 40px'
+        }}
+      />
+      
+      {/* Subtle Blueprint Corner Markers */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-8 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute top-8 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute bottom-24 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute bottom-24 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
       </div>
 
       {/* Progress Bar */}

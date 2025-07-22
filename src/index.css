@@ -56,9 +56,14 @@ All colors MUST be HSL.
     --shape-star: 45 100% 50%; /* Yellow */
     --shape-heart: 350 85% 60%; /* Pink */
 
-    /* Subtle Gradients - Reduced intensity */
-    --gradient-castle: linear-gradient(180deg, hsl(0 0% 98%), hsl(0 0% 94%));
+    /* Blueprint-style gradients and backgrounds */
+    --gradient-blueprint: linear-gradient(180deg, hsl(220 20% 15%), hsl(220 25% 20%));
     --gradient-success: linear-gradient(135deg, hsl(140 80% 50%), hsl(140 70% 60%));
+    
+    /* Blueprint grid pattern */
+    --blueprint-grid: 
+      linear-gradient(hsl(220 40% 35% / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(220 40% 35% / 0.4) 1px, transparent 1px);
 
     /* Gentle Shadows - Following GradeAid specs */
     --shadow-gradeaid: -10px 10px 40px rgba(0, 0, 0, 0.25);
