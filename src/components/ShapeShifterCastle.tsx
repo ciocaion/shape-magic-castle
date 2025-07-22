@@ -27,27 +27,27 @@ export interface GameState {
 }
 
 const initialSlots: CastleSlot[] = [
-  // Blueprint Castle Design - Precisely positioned for architectural learning
+  // Castle Blueprint Design - Authentic castle architecture layout
   
-  // Symmetrical Roof Triangles (Top Left/Right) - Bilateral Symmetry Learning
-  { id: 'roof-left', type: 'triangle', position: { x: 25, y: 15 }, filled: false, showSymmetry: false },
-  { id: 'roof-right', type: 'triangle', position: { x: 75, y: 15 }, filled: false, showSymmetry: false },
+  // Castle Towers (Symmetrical Left/Right) - Round tower foundations
+  { id: 'tower-left', type: 'circle', position: { x: 15, y: 25 }, filled: false, showSymmetry: false },
+  { id: 'tower-right', type: 'circle', position: { x: 85, y: 25 }, filled: false, showSymmetry: false },
   
-  // Central Star Crest (Top Center) - Rotational Symmetry Learning
-  { id: 'star-crest', type: 'star', position: { x: 50, y: 12 }, filled: false, showSymmetry: false },
+  // Tower Roofs (Triangular tops for towers) - Bilateral Symmetry Learning
+  { id: 'roof-left', type: 'triangle', position: { x: 15, y: 15 }, filled: false, showSymmetry: false },
+  { id: 'roof-right', type: 'triangle', position: { x: 85, y: 15 }, filled: false, showSymmetry: false },
   
-  // Symmetrical Heart Gate (Top Right) - Mirroring Concept
-  { id: 'heart-gate', type: 'heart', position: { x: 65, y: 25 }, filled: false, showSymmetry: false },
+  // Central Keep (Main castle structure) - Grand 2D to 3D Transformation
+  { id: 'central-keep', type: 'square', position: { x: 50, y: 35 }, filled: false, showSymmetry: false },
   
-  // Twin Purple Tower Foundations (Mid-Level) - 2D to 3D Circle to Sphere
-  { id: 'tower-left', type: 'circle', position: { x: 20, y: 35 }, filled: false, showSymmetry: false },
-  { id: 'tower-right', type: 'circle', position: { x: 80, y: 35 }, filled: false, showSymmetry: false },
+  // Royal Banner/Flag (Star on central keep) - Rotational Symmetry Learning
+  { id: 'royal-banner', type: 'star', position: { x: 50, y: 20 }, filled: false, showSymmetry: false },
   
-  // Central Grand Dome Foundation (Bottom Center) - Grand 2D to 3D Transformation
-  { id: 'grand-dome', type: 'circle', position: { x: 50, y: 60 }, filled: false, showSymmetry: false },
+  // Castle Gate (Heart-shaped entrance) - Mirroring Concept
+  { id: 'castle-gate', type: 'heart', position: { x: 50, y: 55 }, filled: false, showSymmetry: false },
   
-  // Entrance Portal (Rectangle) - Completing the blueprint
-  { id: 'entrance', type: 'rectangle', position: { x: 50, y: 75 }, filled: false, showSymmetry: false },
+  // Entrance Bridge (Rectangle) - Completing the castle approach
+  { id: 'entrance-bridge', type: 'rectangle', position: { x: 50, y: 70 }, filled: false, showSymmetry: false },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {

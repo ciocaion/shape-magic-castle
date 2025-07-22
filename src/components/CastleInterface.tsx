@@ -20,8 +20,9 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     if (slot.type === shapeType && !slot.filled) {
       onShapePlaced(slotId, shapeType);
       setDragError(null);
-      // Automatically switch to 3D view when shapes are placed
-      if (slots.filter(s => s.filled).length >= 2) {
+      // Only show 3D view when all shapes are completed
+      const filledCount = slots.filter(s => s.filled).length;
+      if (filledCount + 1 >= slots.length) {
         setView3D(true);
       }
     } else {
