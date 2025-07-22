@@ -3,7 +3,6 @@ import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
-import { CelebrationAnimation } from './CelebrationAnimation';
 
 export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'star' | 'heart';
 
@@ -17,7 +16,7 @@ export interface CastleSlot {
 
 export interface GameState {
   slots: CastleSlot[];
-  currentTask: 'building' | 'comparison' | 'celebration';
+  currentTask: 'building' | 'comparison';
   completedSlots: number;
   totalSlots: number;
   comparisonQuestion?: {
@@ -75,7 +74,6 @@ export const ShapeShifterCastle: React.FC = () => {
 
       const newCompletedSlots = prev.completedSlots + 1;
       const shouldShowComparison = newCompletedSlots % 3 === 0 && newCompletedSlots < prev.totalSlots;
-      const isGameComplete = newCompletedSlots >= prev.totalSlots;
 
       // Generate comparison task
       const comparisonQuestion = shouldShowComparison ? generateComparisonTask() : undefined;
@@ -84,7 +82,7 @@ export const ShapeShifterCastle: React.FC = () => {
         ...prev,
         slots: updatedSlots,
         completedSlots: newCompletedSlots,
-        currentTask: isGameComplete ? 'celebration' : shouldShowComparison ? 'comparison' : 'building',
+        currentTask: shouldShowComparison ? 'comparison' : 'building',
         comparisonQuestion,
       };
     });
@@ -93,7 +91,7 @@ export const ShapeShifterCastle: React.FC = () => {
   const handleComparisonComplete = useCallback(() => {
     setGameState(prev => ({
       ...prev,
-      currentTask: prev.completedSlots >= prev.totalSlots ? 'celebration' : 'building',
+      currentTask: 'building',
       comparisonQuestion: undefined,
     }));
   }, []);
@@ -159,8 +157,6 @@ export const ShapeShifterCastle: React.FC = () => {
             question={gameState.comparisonQuestion}
             onComplete={handleComparisonComplete}
           />
-        ) : gameState.currentTask === 'celebration' ? (
-          <CelebrationAnimation />
         ) : (
           <CastleInterface
             slots={gameState.slots}
