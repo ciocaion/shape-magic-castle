@@ -22,7 +22,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     filledCount, 
     totalSlots: slots.length, 
     view3D,
-    slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled }))
+    slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled, type: s.type }))
   });
 
   const handleShapeDrop = (slotId: string, shapeType: ShapeType) => {
@@ -40,12 +40,22 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   // Auto-switch to 3D view when all slots are completed
   React.useEffect(() => {
-    console.log('Effect running:', { allSlotsCompleted, view3D });
+    console.log('Effect running:', { 
+      allSlotsCompleted, 
+      view3D, 
+      filledCount, 
+      totalSlots: slots.length,
+      shouldSwitch: allSlotsCompleted && !view3D 
+    });
+    
     if (allSlotsCompleted && !view3D) {
       console.log('Switching to 3D view!');
-      setView3D(true);
+      // Add a small delay to ensure the last shape animation completes
+      setTimeout(() => {
+        setView3D(true);
+      }, 500);
     }
-  }, [allSlotsCompleted, view3D]);
+  }, [allSlotsCompleted, view3D, filledCount]);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
@@ -83,6 +93,12 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">3D CASTLE VIEW</span>
             </div>
+            {/* Completion message */}
+            {allSlotsCompleted && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-green-500/20 rounded-lg border border-green-400/40">
+                <span className="text-green-300 font-mono text-lg tracking-wider">🎉 CASTLE COMPLETED! 🎉</span>
+              </div>
+            )}
           </div>
         ) : (
           /* Blueprint View */
