@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { ShapePalette } from './ShapePalette';
-import { CastleInterface } from './CastleInterface';
+import { MagicalShapePalette } from './MagicalShapePalette';
+import { EnchantedCastleInterface } from './EnchantedCastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
 import { CelebrationAnimation } from './CelebrationAnimation';
@@ -27,21 +27,29 @@ export interface GameState {
 }
 
 const initialSlots: CastleSlot[] = [
-  // Castle windows (squares)
-  { id: 'window-1', type: 'square', position: { x: 20, y: 40 }, filled: false, showSymmetry: false },
-  { id: 'window-2', type: 'square', position: { x: 80, y: 40 }, filled: false, showSymmetry: false },
-  // Castle door (rectangle)
-  { id: 'door', type: 'rectangle', position: { x: 50, y: 70 }, filled: false, showSymmetry: false },
-  // Castle towers (circles)
-  { id: 'tower-1', type: 'circle', position: { x: 15, y: 20 }, filled: false, showSymmetry: false },
-  { id: 'tower-2', type: 'circle', position: { x: 85, y: 20 }, filled: false, showSymmetry: false },
-  // Castle roofs (triangles)
-  { id: 'roof-1', type: 'triangle', position: { x: 15, y: 10 }, filled: false, showSymmetry: false },
-  { id: 'roof-2', type: 'triangle', position: { x: 50, y: 5 }, filled: false, showSymmetry: false },
-  { id: 'roof-3', type: 'triangle', position: { x: 85, y: 10 }, filled: false, showSymmetry: false },
-  // Decorative elements
-  { id: 'star-1', type: 'star', position: { x: 30, y: 15 }, filled: false, showSymmetry: false },
-  { id: 'heart-1', type: 'heart', position: { x: 70, y: 15 }, filled: false, showSymmetry: false },
+  // Main Castle Gate Roof Triangles (Symmetrical)
+  { id: 'gate-roof-left', type: 'triangle', position: { x: 35, y: 25 }, filled: false, showSymmetry: false },
+  { id: 'gate-roof-right', type: 'triangle', position: { x: 65, y: 25 }, filled: false, showSymmetry: false },
+  
+  // Central Castle Dome
+  { id: 'main-dome', type: 'circle', position: { x: 50, y: 30 }, filled: false, showSymmetry: false },
+  
+  // Tower Orb Foundations (Symmetrical Pillars)
+  { id: 'pillar-orb-left', type: 'circle', position: { x: 20, y: 20 }, filled: false, showSymmetry: false },
+  { id: 'pillar-orb-right', type: 'circle', position: { x: 80, y: 20 }, filled: false, showSymmetry: false },
+  
+  // Castle Windows (Symmetrical)
+  { id: 'window-left', type: 'square', position: { x: 30, y: 50 }, filled: false, showSymmetry: false },
+  { id: 'window-right', type: 'square', position: { x: 70, y: 50 }, filled: false, showSymmetry: false },
+  
+  // Main Gate/Door
+  { id: 'main-gate', type: 'rectangle', position: { x: 50, y: 65 }, filled: false, showSymmetry: false },
+  
+  // Magical Castle Crest
+  { id: 'castle-crest', type: 'star', position: { x: 50, y: 15 }, filled: false, showSymmetry: false },
+  
+  // Decorative Heart Gate Elements
+  { id: 'heart-decoration', type: 'heart', position: { x: 50, y: 45 }, filled: false, showSymmetry: false },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
@@ -149,16 +157,16 @@ export const ShapeShifterCastle: React.FC = () => {
         ) : gameState.currentTask === 'celebration' ? (
           <CelebrationAnimation />
         ) : (
-          <CastleInterface
+          <EnchantedCastleInterface
             slots={gameState.slots}
             onShapePlaced={handleShapePlaced}
           />
         )}
       </div>
 
-      {/* Shape Palette */}
+      {/* Magical Shape Palette */}
       {gameState.currentTask === 'building' && (
-        <ShapePalette className="mx-6 mb-6" />
+        <MagicalShapePalette className="mx-6 mb-6" />
       )}
     </div>
   );
