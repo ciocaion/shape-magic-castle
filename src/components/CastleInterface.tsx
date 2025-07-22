@@ -15,6 +15,15 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   // Calculate if all slots are completed
   const allSlotsCompleted = slots.every(slot => slot.filled);
+  const filledCount = slots.filter(slot => slot.filled).length;
+  
+  console.log('CastleInterface render:', { 
+    allSlotsCompleted, 
+    filledCount, 
+    totalSlots: slots.length, 
+    view3D,
+    slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled }))
+  });
 
   const handleShapeDrop = (slotId: string, shapeType: ShapeType) => {
     const slot = slots.find(s => s.id === slotId);
@@ -31,7 +40,9 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   // Auto-switch to 3D view when all slots are completed
   React.useEffect(() => {
+    console.log('Effect running:', { allSlotsCompleted, view3D });
     if (allSlotsCompleted && !view3D) {
+      console.log('Switching to 3D view!');
       setView3D(true);
     }
   }, [allSlotsCompleted, view3D]);
@@ -57,9 +68,9 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
-          disabled={slots.filter(s => s.filled).length === 0}
+          disabled={filledCount === 0}
         >
-          3D View
+          3D View ({filledCount}/{slots.length})
         </button>
       </div>
 
