@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
@@ -38,25 +38,34 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     }
   };
 
-  // Auto-switch to 3D view when all slots are completed
-  React.useEffect(() => {
-    console.log('Effect running:', { 
+  // Force 3D view when all slots are completed
+  useEffect(() => {
+    console.log('Effect running - checking completion:', { 
       allSlotsCompleted, 
       view3D, 
       filledCount, 
-      totalSlots: slots.length,
-      shouldSwitch: allSlotsCompleted && !view3D 
+      totalSlots: slots.length
     });
     
-    if (allSlotsCompleted && !view3D) {
-      console.log('Switching to 3D view automatically!');
-      // Add a small delay to ensure the last shape animation completes
-      setTimeout(() => {
-        console.log('Actually switching to 3D view now!');
-        setView3D(true);
-      }, 800);
+    if (allSlotsCompleted) {
+      console.log('All slots completed! Forcing 3D view...');
+      if (!view3D) {
+        // Add a small delay to ensure the last shape animation completes
+        setTimeout(() => {
+          console.log('Setting view3D to true NOW');
+          setView3D(true);
+        }, 500);
+      }
     }
-  }, [allSlotsCompleted, view3D, filledCount]);
+  }, [allSlotsCompleted, filledCount, view3D]);
+
+  // Force 3D view immediately if all slots are already completed on mount
+  useEffect(() => {
+    if (allSlotsCompleted && !view3D) {
+      console.log('Mount effect: All slots completed, forcing 3D view');
+      setView3D(true);
+    }
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
@@ -95,7 +104,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
       )}
 
       <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
-        {(view3D || allSlotsCompleted) ? (
+        {/* Always show 3D view when completed, regardless of view3D state */}
+        {(allSlotsCompleted || view3D) ? (
           /* 3D Scene View - Force this view when completed */
           <div className="absolute inset-0">
             <ThreeDCastleScene slots={slots} />
