@@ -15,7 +15,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
-  const [showError, setShowError] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -29,100 +28,142 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
+    
     try {
       const data = JSON.parse(e.dataTransfer.getData('application/json'));
-      if (slot.active && data.type === slot.type) {
-        setIsTransforming(true);
-        setTimeout(() => setIsTransforming(false), 800);
-        onShapeDrop(slot.id, data.type);
-      } else if (slot.active) {
-        setShowError(true);
-        setTimeout(() => setShowError(false), 600);
-      }
+      
+      // Trigger transformation animation
+      setIsTransforming(true);
+      setTimeout(() => setIsTransforming(false), 1500);
+      
+      onShapeDrop(slot.id, data.type);
     } catch (error) {
-      setShowError(true);
-      setTimeout(() => setShowError(false), 600);
+      console.error('Failed to parse drop data:', error);
     }
   };
 
-  // Only render if active, filled, or locked
-  if (!slot.active && !slot.filled && !slot.locked) return null;
+  const getWOWTransformation = () => {
+    if (!slot.filled) return null;
 
-  // Prompt text for each shape type
-  const promptMap: Record<string, string> = {
-    square: 'Add Square',
-    rectangle: 'Add Rectangle',
-    triangle: 'Add Triangle',
-    circle: 'Add Circle',
-    pentagon: 'Add Pentagon',
-    hexagon: 'Add Hexagon',
-  };
-
-  // Size mapping for slot containers
-  const sizeMap = {
-    large: { width: 80, height: 80 },
-    medium: { width: 32, height: 96 }, // tall rectangles when dropped - significantly taller than square
-    small: { width: 20, height: 32 },
-  };
-  const slotSize = sizeMap[slot.size || 'medium'];
-
-  // Filled or locked: show the shape
-  if (slot.filled || slot.locked) {
+    const transformationClass = getTransformationClass(slot.type);
+    
     return (
-      <div
-        className="absolute"
-        style={{ 
-          left: `${slot.position.x}px`, 
-          top: `${slot.position.y}px`,
-          transform: 'translate(-50%, -50%)',
-          width: `${slotSize.width}px`,
-          height: `${slotSize.height}px`,
-        }}
-      >
-        <div className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''}`} style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
-          <DraggableShape 
-            type={slot.type}
-            size={slot.size || 'medium'}
-            is3D={true}
-            isDropped={true}
-          />
-        </div>
+      <div className={`relative ${transformationClass}`}>
+        <DraggableShape 
+          type={slot.type} 
+          size="medium" 
+          is3D={true}
+        />
+        
+        {/* Symmetry Line Reveals */}
+        {slot.showSymmetry && (
+          <div className="absolute inset-0 pointer-events-none">
+            {slot.type === 'triangle' && (
+              <>
+                {/* Bilateral symmetry line for pyramid */}
+                <div className="absolute top-0 left-1/2 bottom-0 w-0.5 bg-cyan-300 opacity-70 animate-symmetry-line-appear transform -translate-x-0.5" />
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-cyan-300 opacity-50 animate-symmetry-line-appear transform -translate-y-0.5" />
+              </>
+            )}
+            
+            {slot.type === 'star' && (
+              <>
+                {/* Rotational symmetry lines for star */}
+                {[0, 72, 144, 216, 288].map((angle, index) => (
+                  <div
+                    key={angle}
+                    className="absolute top-1/2 left-1/2 w-0.5 h-8 bg-yellow-300 opacity-60 animate-symmetry-line-appear origin-bottom"
+                    style={{
+                      transform: `translate(-50%, -100%) rotate(${angle}deg)`,
+                      animationDelay: `${index * 0.1}s`
+                    }}
+                  />
+                ))}
+              </>
+            )}
+            
+            {slot.type === 'heart' && (
+              <>
+                {/* Mirror line for heart */}
+                <div className="absolute top-0 left-1/2 bottom-0 w-0.5 bg-pink-300 opacity-70 animate-symmetry-line-appear transform -translate-x-0.5" />
+                {/* Mirrored heart appears */}
+                <div className="absolute -right-8 top-0 opacity-60 animate-heart-mirror-reveal">
+                  <DraggableShape type="heart" size="medium" />
+                </div>
+              </>
+            )}
+            
+            {slot.type === 'circle' && (
+              <>
+                {/* Sphere symmetry indicators */}
+                <div className="absolute top-1/4 left-1/4 right-1/4 bottom-1/4 border border-blue-300 rounded-full opacity-50 animate-symmetry-line-appear" />
+                <div className="absolute top-1/3 left-1/3 right-1/3 bottom-1/3 border border-blue-200 rounded-full opacity-30 animate-symmetry-line-appear" style={{ animationDelay: '0.2s' }} />
+              </>
+            )}
+          </div>
+        )}
       </div>
     );
-  }
+  };
 
-  // Active slot: show glowing outline and prompt
+  const getTransformationClass = (shapeType: ShapeType) => {
+    switch (shapeType) {
+      case 'triangle':
+        return 'animate-triangle-to-pyramid';
+      case 'circle':
+        return 'animate-circle-to-sphere';
+      case 'star':
+        return 'animate-star-symmetry-reveal';
+      case 'heart':
+        return 'animate-heart-mirror-reveal';
+      default:
+        return 'animate-gentle-bounce';
+    }
+  };
+
+  const getSlotContent = () => {
+    if (slot.filled) {
+      return getWOWTransformation();
+    }
+
+    // Blueprint-style empty slot with glowing outline
+    return (
+      <div className={`
+        w-16 h-16 border-2 border-dashed rounded-lg flex items-center justify-center
+        transition-all duration-300 min-w-[44px] min-h-[44px]
+        ${isDragOver 
+          ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' 
+          : 'border-cyan-300/60 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+        }
+        ${hasError ? 'border-error bg-error/10 animate-subtle-shake' : ''}
+      `}>
+        {/* Blueprint-style shape hint */}
+        <div className="opacity-40">
+          <DraggableShape type={slot.type} size="medium" />
+        </div>
+        
+        {/* Blueprint corner markers */}
+        <div className="absolute -top-1 -left-1 w-2 h-2 border-l border-t border-cyan-300" />
+        <div className="absolute -top-1 -right-1 w-2 h-2 border-r border-t border-cyan-300" />
+        <div className="absolute -bottom-1 -left-1 w-2 h-2 border-l border-b border-cyan-300" />
+        <div className="absolute -bottom-1 -right-1 w-2 h-2 border-r border-b border-cyan-300" />
+      </div>
+    );
+  };
+
   return (
     <div
       className="absolute"
       style={{ 
-        left: `${slot.position.x}px`, 
-        top: `${slot.position.y}px`,
-        transform: 'translate(-50%, -50%)',
-        width: `${slotSize.width}px`,
-        height: `${slotSize.height}px`,
+        left: `${slot.position.x}%`, 
+        top: `${slot.position.y}%`,
+        transform: 'translate(-50%, -50%)'
       }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div
-        className={`border-4 rounded-lg flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
-          ${showError ? 'border-red-400 bg-red-200/20 animate-subtle-shake' : isDragOver ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'border-cyan-300/80 bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
-        `}
-        style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
-      >
-        {/* Shape hint */}
-        <div className="opacity-30">
-          <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
-        </div>
-        {/* Floating prompt */}
-        {slot.active && (
-          <div className="absolute left-1/2 top-[-2.5rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
-            {promptMap[slot.type]}
-          </div>
-        )}
-      </div>
+      {getSlotContent()}
     </div>
   );
 };

@@ -4,13 +4,12 @@ import { CastleInterface } from './CastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
 
-export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'pentagon' | 'hexagon';
+export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'star' | 'heart';
 
 export interface CastleSlot {
   id: string;
   type: ShapeType;
   position: { x: number; y: number };
-  size?: 'small' | 'medium' | 'large';
   filled: boolean;
   showSymmetry: boolean;
 }
@@ -26,55 +25,104 @@ export interface GameState {
   };
 }
 
-// Step-by-step sequence for the castle blueprint
-const blueprintSequence = [
-  // Back Tower (tall rectangle, positioned behind square - rendered first)
-  { id: 'tower-back', type: 'rectangle', position: { x: 400, y: 280 }, size: 'medium' },
-  // Main Castle Base (large square, rendered on top of back tower)
-  { id: 'castle-base', type: 'square', position: { x: 400, y: 300 }, size: 'large' },
-  // Left Tower (tall rectangle, very close to left edge of square)
-  { id: 'tower-left', type: 'rectangle', position: { x: 344, y: 300 }, size: 'medium' },
-  // Right Tower (tall rectangle, very close to right edge of square)
-  { id: 'tower-right', type: 'rectangle', position: { x: 456, y: 300 }, size: 'medium' },
-  // Left Roof (triangle above left tower)
-  { id: 'roof-left', type: 'triangle', position: { x: 344, y: 252 }, size: 'medium' },
-  // Right Roof (triangle above right tower)
-  { id: 'roof-right', type: 'triangle', position: { x: 456, y: 252 }, size: 'medium' },
-  // Back Roof (triangle above back tower)
-  { id: 'roof-back', type: 'triangle', position: { x: 400, y: 232 }, size: 'medium' },
-  // Tree Trunk (thin vertical rectangle, closer to castle, bottom-aligned)
-  { id: 'tree-trunk', type: 'rectangle', position: { x: 550, y: 300 }, size: 'small' },
-  // Tree Top (green pentagon, on top of trunk - closer to castle)
-  { id: 'tree-top', type: 'pentagon', position: { x: 550, y: 268 }, size: 'medium' },
-  // Sun (circle, closer to castle - brought down even more)
-  { id: 'sun', type: 'circle', position: { x: 250, y: 200 }, size: 'medium' },
+const initialSlots: CastleSlot[] = [
+  // Castle Blueprint Design - Authentic castle architecture layout
+  
+  // Castle Towers (Symmetrical Left/Right) - Round tower foundations
+  { id: 'tower-left', type: 'circle', position: { x: 15, y: 25 }, filled: false, showSymmetry: false },
+  { id: 'tower-right', type: 'circle', position: { x: 85, y: 25 }, filled: false, showSymmetry: false },
+  
+  // Tower Roofs (Triangular tops for towers) - Bilateral Symmetry Learning
+  { id: 'roof-left', type: 'triangle', position: { x: 15, y: 15 }, filled: false, showSymmetry: false },
+  { id: 'roof-right', type: 'triangle', position: { x: 85, y: 15 }, filled: false, showSymmetry: false },
+  
+  // Central Keep (Main castle structure) - Grand 2D to 3D Transformation
+  { id: 'central-keep', type: 'square', position: { x: 50, y: 35 }, filled: false, showSymmetry: false },
+  
+  // Royal Banner/Flag (Star on central keep) - Rotational Symmetry Learning
+  { id: 'royal-banner', type: 'star', position: { x: 50, y: 20 }, filled: false, showSymmetry: false },
+  
+  // Castle Gate (Heart-shaped entrance) - Mirroring Concept
+  { id: 'castle-gate', type: 'heart', position: { x: 50, y: 55 }, filled: false, showSymmetry: false },
+  
+  // Entrance Bridge (Rectangle) - Completing the castle approach
+  { id: 'entrance-bridge', type: 'rectangle', position: { x: 50, y: 70 }, filled: false, showSymmetry: false },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
-  // Track which slots are filled by id
-  const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
-  // Track the current step in the sequence
-  const [currentStep, setCurrentStep] = useState(0);
+  const [gameState, setGameState] = useState<GameState>({
+    slots: initialSlots,
+    currentTask: 'building',
+    completedSlots: 0,
+    totalSlots: initialSlots.length,
+    comparisonQuestion: undefined,
+  });
 
-  // Handler for placing a shape
-  const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
-    const expected = blueprintSequence[currentStep];
-    if (slotId === expected.id && shapeType === expected.type) {
-      setFilledSlots(prev => ({ ...prev, [slotId]: true }));
-      setCurrentStep(step => step + 1);
-    } else {
-      // Incorrect shape or slot: trigger error feedback (handled in BlueprintCastleSlot)
-    }
+  const handleShapePlaced = useCallback((slotId: string, shapeType: ShapeType) => {
+    setGameState(prev => {
+      const slot = prev.slots.find(s => s.id === slotId);
+      if (!slot || slot.type !== shapeType || slot.filled) {
+        // Wrong shape or slot already filled - show error feedback
+        return prev;
+      }
+
+      const updatedSlots = prev.slots.map(s =>
+        s.id === slotId
+          ? { ...s, filled: true, showSymmetry: true }
+          : s
+      );
+
+      const newCompletedSlots = prev.completedSlots + 1;
+      const shouldShowComparison = newCompletedSlots % 3 === 0 && newCompletedSlots < prev.totalSlots;
+
+      // Generate comparison task
+      const comparisonQuestion = shouldShowComparison ? generateComparisonTask() : undefined;
+
+      return {
+        ...prev,
+        slots: updatedSlots,
+        completedSlots: newCompletedSlots,
+        currentTask: shouldShowComparison ? 'comparison' : 'building',
+        comparisonQuestion,
+      };
+    });
+  }, []);
+
+  const handleComparisonComplete = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      currentTask: 'building',
+      comparisonQuestion: undefined,
+    }));
+  }, []);
+
+  const generateComparisonTask = () => {
+    const tasks = [
+      {
+        shapes: [
+          { type: 'circle' as ShapeType, size: 'small' as const },
+          { type: 'circle' as ShapeType, size: 'large' as const }
+        ],
+        task: 'bigger' as const
+      },
+      {
+        shapes: [
+          { type: 'triangle' as ShapeType },
+          { type: 'square' as ShapeType }
+        ],
+        task: 'more-corners' as const
+      },
+      {
+        shapes: [
+          { type: 'square' as ShapeType, is3D: false },
+          { type: 'square' as ShapeType, is3D: true }
+        ],
+        task: '3d-shape' as const
+      }
+    ];
+    
+    return tasks[Math.floor(Math.random() * tasks.length)];
   };
-
-  // Prepare slots for rendering: previous slots are filled, current is active, rest are hidden
-  const slots = blueprintSequence.map((slot, idx) => ({
-    ...slot,
-    filled: !!filledSlots[slot.id],
-    active: idx === currentStep,
-    locked: idx < currentStep,
-    showSymmetry: false,
-  }));
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
@@ -86,6 +134,7 @@ export const ShapeShifterCastle: React.FC = () => {
           backgroundSize: '40px 40px'
         }}
       />
+      
       {/* Subtle Blueprint Corner Markers */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-8 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
@@ -93,21 +142,33 @@ export const ShapeShifterCastle: React.FC = () => {
         <div className="absolute bottom-24 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
         <div className="absolute bottom-24 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
       </div>
+
       {/* Progress Bar */}
       <ProgressBar
-        completed={currentStep}
-        total={blueprintSequence.length}
+        completed={gameState.completedSlots}
+        total={gameState.totalSlots}
         className="m-6"
       />
+
       {/* Main Game Area */}
       <div className="flex-1 flex flex-col">
-        <CastleInterface
-          slots={slots}
-          onShapePlaced={handleShapePlaced}
-        />
+        {gameState.currentTask === 'comparison' && gameState.comparisonQuestion ? (
+          <ComparisonTask
+            question={gameState.comparisonQuestion}
+            onComplete={handleComparisonComplete}
+          />
+        ) : (
+          <CastleInterface
+            slots={gameState.slots}
+            onShapePlaced={handleShapePlaced}
+          />
+        )}
       </div>
+
       {/* Shape Palette */}
-      <ShapePalette className="mx-6 mb-6" />
+      {gameState.currentTask === 'building' && (
+        <ShapePalette className="mx-6 mb-6" />
+      )}
     </div>
   );
 };

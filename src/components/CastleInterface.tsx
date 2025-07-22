@@ -40,8 +40,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* View Toggle - moved outside main content for guaranteed visibility */}
-      <div className="mb-4 flex gap-2 z-30 relative">
+      {/* View Toggle */}
+      <div className="mb-4 flex gap-2">
         <button
           onClick={() => setView3D(false)}
           className={`px-4 py-2 rounded-lg transition-all ${
@@ -63,10 +63,11 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
           3D View ({filledCount}/{slots.length})
         </button>
       </div>
+
       <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
         {view3D ? (
           /* 3D Scene View */
-          <div className="relative w-full h-full">
+          <div className="absolute inset-0">
             <ThreeDCastleScene slots={slots} />
             {/* 3D View Overlay */}
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
@@ -86,14 +87,17 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
                 backgroundSize: '30px 30px'
               }}
             />
+            
             {/* Blueprint Title Banner */}
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">CASTLE CONSTRUCTION BLUEPRINT</span>
             </div>
+            
             {/* Blueprint revision marker */}
             <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
               <span className="text-cyan-400 font-mono text-xs">REV 001</span>
             </div>
+
             {/* Render Blueprint Castle Slots */}
             {slots.map((slot) => (
               <BlueprintCastleSlot
@@ -103,6 +107,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
                 hasError={dragError === slot.id}
               />
             ))}
+
             {/* Blueprint measurement lines */}
             <div className="absolute inset-0 pointer-events-none opacity-10">
               <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-400" />

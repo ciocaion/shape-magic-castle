@@ -7,7 +7,7 @@ interface ShapePaletteProps {
 }
 
 export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) => {
-  const shapes: ShapeType[] = ['square', 'rectangle', 'triangle', 'circle', 'pentagon'];
+  const shapes: ShapeType[] = ['square', 'rectangle', 'triangle', 'circle', 'star', 'heart'];
 
   return (
     <div className={`bg-card rounded-gradeaid p-6 shadow-gradeaid border-l-[10px] border-b-[10px] border-foreground ${className}`}>
@@ -19,13 +19,13 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) =>
       </div>
       
       {/* Shape Tools with Purposeful Display */}
-      <div className="flex justify-center items-center gap-12 flex-wrap">
+      <div className="flex justify-center items-center gap-8 flex-wrap">
         {shapes.map((shape) => (
-          <div key={shape} className="relative group" style={{ width: '32px', height: '32px' }}>
+          <div key={shape} className="relative group">
             <DraggableShape
               type={shape}
-              className="transform hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/50 rounded-2xl"
-              size="medium"
+              className="transform hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/50 rounded-2xl animate-blueprint-pulse"
+              size="large"
             />
             {/* Tool readiness indicator */}
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-success rounded-full animate-gentle-float opacity-70" />
