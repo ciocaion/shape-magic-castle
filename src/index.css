@@ -8,35 +8,73 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Magical Castle Theme */
+    --background: 220 100% 96%;
+    --foreground: 260 20% 20%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 280 50% 98%;
+    --card-foreground: 260 20% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 280 50% 98%;
+    --popover-foreground: 260 20% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Magical Purple Primary */
+    --primary: 280 80% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 280 90% 75%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Enchanted Pink Secondary */
+    --secondary: 320 70% 85%;
+    --secondary-foreground: 280 50% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Mystical Accent */
+    --muted: 240 30% 90%;
+    --muted-foreground: 240 15% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 200 80% 70%;
+    --accent-foreground: 200 90% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Success & Error */
+    --success: 140 80% 60%;
+    --success-foreground: 140 90% 15%;
+    --error: 0 80% 65%;
+    --error-foreground: 0 90% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 80% 65%;
+    --destructive-foreground: 0 90% 95%;
 
-    --radius: 0.5rem;
+    --border: 240 20% 85%;
+    --input: 240 20% 85%;
+    --ring: 280 80% 60%;
+
+    /* Castle Magic Colors */
+    --castle-stone: 40 15% 75%;
+    --castle-tower: 280 40% 55%;
+    --castle-roof: 0 70% 60%;
+    --castle-door: 30 60% 45%;
+    --castle-window: 200 90% 70%;
+
+    /* Shape Colors */
+    --shape-square: 240 80% 65%;
+    --shape-circle: 320 85% 70%;
+    --shape-triangle: 60 85% 65%;
+    --shape-rectangle: 180 75% 60%;
+    --shape-star: 50 90% 70%;
+    --shape-heart: 350 85% 70%;
+
+    /* Magical Gradients */
+    --gradient-magic: linear-gradient(135deg, hsl(280 80% 60%), hsl(320 80% 65%), hsl(200 80% 70%));
+    --gradient-castle: linear-gradient(180deg, hsl(220 100% 96%), hsl(240 60% 90%));
+    --gradient-success: linear-gradient(135deg, hsl(140 80% 60%), hsl(180 70% 65%));
+    --gradient-glow: radial-gradient(circle, hsl(280 90% 75% / 0.3), transparent 70%);
+
+    /* Magical Shadows */
+    --shadow-magic: 0 8px 32px hsl(280 80% 60% / 0.3);
+    --shadow-castle: 0 12px 40px hsl(240 50% 40% / 0.2);
+    --shadow-shape: 0 4px 20px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 30px hsl(280 90% 75% / 0.6);
+
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
