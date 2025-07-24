@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
@@ -7,6 +6,8 @@ interface BlueprintCastleSlotProps {
   slot: CastleSlotType;
   onShapeDrop: (slotId: string, shapeType: ShapeType) => void;
   onRemove?: (shapeId: string) => void;
+  onMove?: (shapeId: string, newPosition: { x: number; y: number }) => void;
+  onRotate?: (shapeId: string) => void;
   hasError?: boolean;
   isExploreMode?: boolean;
 }
@@ -15,12 +16,16 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   slot, 
   onShapeDrop, 
   onRemove,
+  onMove,
+  onRotate,
   hasError,
   isExploreMode = false 
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const handleDragOver = (e: React.DragEvent) => {
     if (isExploreMode && slot.isExploreMode) return;
@@ -60,20 +65,50 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
-  const handleShapeDragStart = (e: React.DragEvent) => {
-    // Prevent dragging of explore mode shapes to avoid duplication
-    if (isExploreMode && slot.isExploreMode) {
-      e.preventDefault();
-      return;
-    }
-    
-    // Allow dragging from palette but prevent re-dragging placed shapes
-    if (slot.filled || slot.locked) {
-      e.preventDefault();
+  const handleRotate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRotate) {
+      onRotate(slot.id);
     }
   };
 
-  // In explore mode, show all shapes with remove button
+  const handleShapeDragStart = (e: React.DragEvent) => {
+    // Prevent dragging of blueprint shapes (non-explore mode)
+    if (!isExploreMode || !slot.isExploreMode) {
+      e.preventDefault();
+      return;
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isExploreMode || !slot.isExploreMode || !onMove) return;
+    
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !onMove) return;
+    
+    const container = e.currentTarget.closest('.relative');
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const newX = e.clientX - containerRect.left - dragOffset.x;
+    const newY = e.clientY - containerRect.top - dragOffset.y;
+    
+    onMove(slot.id, { x: newX, y: newY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // In explore mode, show all shapes with interactive controls
   if (isExploreMode && slot.isExploreMode) {
     const sizeMap = {
       large: { width: 80, height: 80 },
@@ -84,7 +119,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
 
     return (
       <div
-        className="absolute group"
+        className="absolute group cursor-move"
         style={{ 
           left: `${slot.position.x}px`, 
           top: `${slot.position.y}px`,
@@ -92,9 +127,16 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           width: `${slotSize.width}px`,
           height: `${slotSize.height}px`,
         }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
       >
         <div 
-          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}
+          style={{ 
+            width: `${slotSize.width}px`, 
+            height: `${slotSize.height}px`,
+            transform: `rotate(${slot.rotation || 0}deg)`
+          }}
           onDragStart={handleShapeDragStart}
         >
           <DraggableShape 
@@ -104,14 +146,23 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             isDropped={true}
           />
         </div>
-        {/* Remove button - only show on hover */}
-        <button
-          onClick={handleRemove}
-          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center hover:bg-red-600 z-10"
-          title="Remove shape"
-        >
-          ×
-        </button>
+        {/* Control buttons - only show on hover */}
+        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button
+            onClick={handleRotate}
+            className="w-6 h-6 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 z-10 flex items-center justify-center"
+            title="Rotate shape"
+          >
+            ↻
+          </button>
+          <button
+            onClick={handleRemove}
+            className="w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600 z-10 flex items-center justify-center"
+            title="Remove shape"
+          >
+            ×
+          </button>
+        </div>
       </div>
     );
   }
@@ -119,7 +170,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   // Only render blueprint slots if not in explore mode and not an explore shape
   if (isExploreMode || (!slot.active && !slot.filled && !slot.locked)) return null;
 
-  // Prompt text for each shape type
   const promptMap: Record<string, string> = {
     square: 'Add Square',
     rectangle: 'Add Rectangle',

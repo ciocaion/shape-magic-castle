@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
@@ -8,6 +9,8 @@ interface CastleInterfaceProps {
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
   onExploreShapePlaced?: (position: { x: number; y: number }, shapeType: ShapeType) => void;
   onExploreShapeRemoved?: (shapeId: string) => void;
+  onExploreShapeMoved?: (shapeId: string, newPosition: { x: number; y: number }) => void;
+  onExploreShapeRotated?: (shapeId: string) => void;
   isExploreMode?: boolean;
   isCompleted?: boolean;
   onStartExplore?: () => void;
@@ -18,6 +21,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   onShapePlaced, 
   onExploreShapePlaced,
   onExploreShapeRemoved,
+  onExploreShapeMoved,
+  onExploreShapeRotated,
   isExploreMode = false,
   isCompleted = false,
   onStartExplore
@@ -25,7 +30,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
 
-  // Reset to blueprint view when entering explore mode
+  // Force reset to blueprint view when entering explore mode
   useEffect(() => {
     if (isExploreMode) {
       setView3D(false);
@@ -89,6 +94,18 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
     }
   };
 
+  const handleExploreShapeMove = (shapeId: string, newPosition: { x: number; y: number }) => {
+    if (onExploreShapeMoved) {
+      onExploreShapeMoved(shapeId, newPosition);
+    }
+  };
+
+  const handleExploreShapeRotate = (shapeId: string) => {
+    if (onExploreShapeRotated) {
+      onExploreShapeRotated(shapeId);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
       {/* View Toggle with Explore Mode - all in same line */}
@@ -118,8 +135,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         {isCompleted && !isExploreMode && (
           <button
             onClick={onStartExplore}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg cursor-pointer"
-            style={{ pointerEvents: 'auto' }}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg"
           >
             Explore Shapes
           </button>
@@ -168,6 +184,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
                 slot={slot}
                 onShapeDrop={handleShapeDrop}
                 onRemove={slot.isExploreMode ? handleExploreShapeRemove : undefined}
+                onMove={slot.isExploreMode ? handleExploreShapeMove : undefined}
+                onRotate={slot.isExploreMode ? handleExploreShapeRotate : undefined}
                 hasError={dragError === slot.id}
                 isExploreMode={isExploreMode}
               />

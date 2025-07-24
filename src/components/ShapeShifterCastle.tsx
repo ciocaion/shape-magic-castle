@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -16,6 +17,7 @@ export interface CastleSlot {
   locked: boolean;
   showSymmetry: boolean;
   isExploreMode?: boolean;
+  rotation?: number;
 }
 
 export interface GameState {
@@ -31,36 +33,22 @@ export interface GameState {
 
 // Compact castle blueprint sequence - proper castle formation with triangles directly on top of rectangles
 const blueprintSequence = [
-  // Center Tower (blue rectangle, positioned behind square with bottom aligned to square's center)
   { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
-  // Main Castle Base (purple square, centered bottom) - ground level at y: 350
   { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
-  // Left Tower (blue rectangle, positioned on left side, bottom-aligned with base)
   { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
-  // Right Tower (blue rectangle, positioned on right side, bottom-aligned with base)
   { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
-  // Left Roof (green triangle, positioned directly on top of left tower)
   { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 302 }, size: 'medium' as const },
-  // Right Roof (green triangle, positioned directly on top of right tower)
   { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 302 }, size: 'medium' as const },
-  // Center Roof (green triangle, positioned directly on top of center tower)
   { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 272 }, size: 'medium' as const },
-  // Sun (orange circle, positioned lower in the left area)
   { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 150 }, size: 'medium' as const },
-  // Tree Trunk (small thin rectangle, positioned to the right of castle, bottom-aligned)
   { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
-  // Tree Top (yellow pentagon, positioned directly on top of tree trunk)
   { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 318 }, size: 'medium' as const },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
-  // Track which slots are filled by id
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
-  // Track the current step in the sequence
   const [currentStep, setCurrentStep] = useState(0);
-  // Track explore mode
   const [isExploreMode, setIsExploreMode] = useState(false);
-  // Track explore mode shapes
   const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
 
   const isCompleted = currentStep >= blueprintSequence.length;
@@ -72,7 +60,6 @@ export const ShapeShifterCastle: React.FC = () => {
     isExploreMode 
   });
 
-  // Handler for placing a shape in blueprint mode
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
     if (isExploreMode) return;
     
@@ -83,7 +70,6 @@ export const ShapeShifterCastle: React.FC = () => {
     }
   };
 
-  // Handler for placing shapes in explore mode
   const handleExploreShapePlaced = (position: { x: number; y: number }, shapeType: ShapeType) => {
     const newShape: CastleSlot = {
       id: `explore-${Date.now()}-${Math.random()}`,
@@ -95,16 +81,31 @@ export const ShapeShifterCastle: React.FC = () => {
       locked: false,
       showSymmetry: false,
       isExploreMode: true,
+      rotation: 0,
     };
     setExploreShapes(prev => [...prev, newShape]);
   };
 
-  // Handler for removing shapes in explore mode
   const handleExploreShapeRemoved = (shapeId: string) => {
     setExploreShapes(prev => prev.filter(shape => shape.id !== shapeId));
   };
 
-  // Start explore mode - no exit needed
+  const handleExploreShapeMoved = (shapeId: string, newPosition: { x: number; y: number }) => {
+    setExploreShapes(prev => prev.map(shape => 
+      shape.id === shapeId 
+        ? { ...shape, position: newPosition }
+        : shape
+    ));
+  };
+
+  const handleExploreShapeRotated = (shapeId: string) => {
+    setExploreShapes(prev => prev.map(shape => 
+      shape.id === shapeId 
+        ? { ...shape, rotation: (shape.rotation || 0) + 45 }
+        : shape
+    ));
+  };
+
   const handleStartExplore = () => {
     setIsExploreMode(true);
   };
@@ -154,6 +155,8 @@ export const ShapeShifterCastle: React.FC = () => {
           onShapePlaced={handleShapePlaced}
           onExploreShapePlaced={handleExploreShapePlaced}
           onExploreShapeRemoved={handleExploreShapeRemoved}
+          onExploreShapeMoved={handleExploreShapeMoved}
+          onExploreShapeRotated={handleExploreShapeRotated}
           isExploreMode={isExploreMode}
           isCompleted={isCompleted}
           onStartExplore={handleStartExplore}
