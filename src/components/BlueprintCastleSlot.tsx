@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
@@ -26,6 +26,38 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   const [showError, setShowError] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  // Clean up dragging state when component unmounts or dragging should stop
+  useEffect(() => {
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !onMove) return;
+      
+      const container = document.querySelector('.relative');
+      if (!container) return;
+      
+      const containerRect = container.getBoundingClientRect();
+      const newX = e.clientX - containerRect.left - dragOffset.x;
+      const newY = e.clientY - containerRect.top - dragOffset.y;
+      
+      onMove(slot.id, { x: newX, y: newY });
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mouseleave', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseleave', handleMouseUp);
+    };
+  }, [isDragging, onMove, slot.id, dragOffset]);
 
   const handleDragOver = (e: React.DragEvent) => {
     if (isExploreMode && slot.isExploreMode) return;
@@ -83,29 +115,15 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isExploreMode || !slot.isExploreMode || !onMove) return;
     
+    e.preventDefault();
+    e.stopPropagation();
+    
     setIsDragging(true);
     const rect = e.currentTarget.getBoundingClientRect();
     setDragOffset({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
     });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !onMove) return;
-    
-    const container = e.currentTarget.closest('.relative');
-    if (!container) return;
-    
-    const containerRect = container.getBoundingClientRect();
-    const newX = e.clientX - containerRect.left - dragOffset.x;
-    const newY = e.clientY - containerRect.top - dragOffset.y;
-    
-    onMove(slot.id, { x: newX, y: newY });
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
   };
 
   // In explore mode, show all shapes with interactive controls
@@ -119,23 +137,23 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
 
     return (
       <div
-        className="absolute group cursor-move"
+        className={`absolute group ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{ 
           left: `${slot.position.x}px`, 
           top: `${slot.position.y}px`,
           transform: 'translate(-50%, -50%)',
           width: `${slotSize.width}px`,
           height: `${slotSize.height}px`,
+          zIndex: isDragging ? 1000 : 1,
         }}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
       >
         <div 
           style={{ 
             width: `${slotSize.width}px`, 
             height: `${slotSize.height}px`,
-            transform: `rotate(${slot.rotation || 0}deg)`
+            transform: `rotate(${slot.rotation || 0}deg)`,
+            pointerEvents: isDragging ? 'none' : 'auto'
           }}
           onDragStart={handleShapeDragStart}
         >
@@ -146,23 +164,25 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             isDropped={true}
           />
         </div>
-        {/* Control buttons - only show on hover */}
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button
-            onClick={handleRotate}
-            className="w-6 h-6 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 z-10 flex items-center justify-center"
-            title="Rotate shape"
-          >
-            ↻
-          </button>
-          <button
-            onClick={handleRemove}
-            className="w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600 z-10 flex items-center justify-center"
-            title="Remove shape"
-          >
-            ×
-          </button>
-        </div>
+        {/* Control buttons - only show on hover and not when dragging */}
+        {!isDragging && (
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <button
+              onClick={handleRotate}
+              className="w-6 h-6 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 z-10 flex items-center justify-center"
+              title="Rotate shape"
+            >
+              ↻
+            </button>
+            <button
+              onClick={handleRemove}
+              className="w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600 z-10 flex items-center justify-center"
+              title="Remove shape"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
     );
   }
