@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -12,6 +13,8 @@ export interface CastleSlot {
   position: { x: number; y: number };
   size?: 'small' | 'medium' | 'large';
   filled: boolean;
+  active: boolean;
+  locked: boolean;
   showSymmetry: boolean;
 }
 
@@ -29,25 +32,25 @@ export interface GameState {
 // Compact castle blueprint sequence
 const blueprintSequence = [
   // Main Castle Base (purple square, centered)
-  { id: 'castle-base', type: 'square', position: { x: 400, y: 340 }, size: 'large' },
+  { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 340 }, size: 'large' as const },
   // Left Tower (blue rectangle, touching left side of square)
-  { id: 'tower-left', type: 'rectangle', position: { x: 320, y: 300 }, size: 'medium' },
+  { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 320, y: 300 }, size: 'medium' as const },
   // Right Tower (blue rectangle, touching right side of square)
-  { id: 'tower-right', type: 'rectangle', position: { x: 480, y: 300 }, size: 'medium' },
+  { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 480, y: 300 }, size: 'medium' as const },
   // Center Tower (blue rectangle, above square base)
-  { id: 'tower-center', type: 'rectangle', position: { x: 400, y: 260 }, size: 'medium' },
+  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 260 }, size: 'medium' as const },
   // Left Roof (green triangle, directly on top of left tower)
-  { id: 'roof-left', type: 'triangle', position: { x: 320, y: 220 }, size: 'medium' },
+  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 320, y: 220 }, size: 'medium' as const },
   // Right Roof (green triangle, directly on top of right tower)
-  { id: 'roof-right', type: 'triangle', position: { x: 480, y: 220 }, size: 'medium' },
+  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 480, y: 220 }, size: 'medium' as const },
   // Center Roof (green triangle, directly on top of center tower)
-  { id: 'roof-center', type: 'triangle', position: { x: 400, y: 180 }, size: 'medium' },
+  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 180 }, size: 'medium' as const },
   // Sun (orange circle, top-left corner, far from castle)
-  { id: 'sun', type: 'circle', position: { x: 150, y: 120 }, size: 'medium' },
+  { id: 'sun', type: 'circle' as ShapeType, position: { x: 150, y: 120 }, size: 'medium' as const },
   // Tree Trunk (small blue rectangle, right side of castle, bottom-aligned with base)
-  { id: 'tree-trunk', type: 'rectangle', position: { x: 580, y: 340 }, size: 'small' },
+  { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 340 }, size: 'small' as const },
   // Tree Top (yellow pentagon, directly on top of trunk)
-  { id: 'tree-top', type: 'pentagon', position: { x: 580, y: 300 }, size: 'medium' },
+  { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 300 }, size: 'medium' as const },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
@@ -68,7 +71,7 @@ export const ShapeShifterCastle: React.FC = () => {
   };
 
   // Prepare slots for rendering: previous slots are filled, current is active, rest are hidden
-  const slots = blueprintSequence.map((slot, idx) => ({
+  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
     ...slot,
     filled: !!filledSlots[slot.id],
     active: idx === currentStep,

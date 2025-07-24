@@ -111,8 +111,8 @@ export const ComparisonTask: React.FC<ComparisonTaskProps> = ({ question, onComp
       case 'triangle': return 3;
       case 'square': return 4;
       case 'rectangle': return 4;
-      case 'star': return 10;
-      case 'heart': return 0;
+      case 'pentagon': return 5;
+      case 'hexagon': return 6;
       default: return 0;
     }
   };

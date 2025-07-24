@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { ShapeType } from './ShapeShifterCastle';
 
@@ -88,20 +89,6 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             aria-label="Circle shape"
           >
             <circle cx="50" cy="50" r="50" fill="hsl(var(--shape-circle))" />
-          </svg>
-        );
-      case 'star':
-        return (
-          <svg
-            viewBox="0 0 100 100"
-            className={baseClasses}
-            aria-label="Star shape"
-            style={{ width: '100%', height: '100%' }}
-          >
-            <polygon
-              points="50,5 61,39 98,39 67,59 78,91 50,70 22,91 33,59 2,39 39,39"
-              fill="hsl(var(--shape-star))"
-            />
           </svg>
         );
       case 'pentagon':
