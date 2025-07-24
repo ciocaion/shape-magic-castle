@@ -42,15 +42,15 @@ const castleBlueprintSequence = [
   { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 320 }, size: 'medium' as const },
 ];
 
-// Airplane blueprint sequence - proper airplane shape
+// Airplane blueprint sequence - matching the screenshot layout
 const airplaneBlueprintSequence = [
   { id: 'plane-body', type: 'rectangle' as ShapeType, position: { x: 400, y: 300 }, size: 'large' as const },
-  { id: 'plane-nose', type: 'triangle' as ShapeType, position: { x: 480, y: 300 }, size: 'medium' as const },
-  { id: 'plane-wing-left', type: 'rectangle' as ShapeType, position: { x: 350, y: 300 }, size: 'medium' as const },
-  { id: 'plane-wing-right', type: 'rectangle' as ShapeType, position: { x: 450, y: 300 }, size: 'medium' as const },
-  { id: 'plane-tail', type: 'triangle' as ShapeType, position: { x: 320, y: 300 }, size: 'medium' as const },
-  { id: 'plane-tail-fin', type: 'triangle' as ShapeType, position: { x: 320, y: 260 }, size: 'small' as const },
-  { id: 'propeller', type: 'circle' as ShapeType, position: { x: 500, y: 300 }, size: 'small' as const },
+  { id: 'plane-nose', type: 'triangle' as ShapeType, position: { x: 520, y: 300 }, size: 'medium' as const },
+  { id: 'plane-wing-top', type: 'rectangle' as ShapeType, position: { x: 400, y: 260 }, size: 'medium' as const },
+  { id: 'plane-wing-bottom', type: 'rectangle' as ShapeType, position: { x: 400, y: 340 }, size: 'medium' as const },
+  { id: 'plane-tail-body', type: 'rectangle' as ShapeType, position: { x: 300, y: 300 }, size: 'small' as const },
+  { id: 'plane-tail-fin', type: 'triangle' as ShapeType, position: { x: 300, y: 260 }, size: 'small' as const },
+  { id: 'propeller', type: 'circle' as ShapeType, position: { x: 560, y: 300 }, size: 'small' as const },
   { id: 'cloud-1', type: 'circle' as ShapeType, position: { x: 150, y: 180 }, size: 'medium' as const },
   { id: 'cloud-2', type: 'circle' as ShapeType, position: { x: 600, y: 200 }, size: 'medium' as const },
 ];
