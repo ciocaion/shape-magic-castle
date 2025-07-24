@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -31,8 +30,8 @@ export interface GameState {
 
 // Castle blueprint sequence
 const castleBlueprintSequence = [
-  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
   { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
+  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
   { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
   { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
   { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 290 }, size: 'medium' as const },
@@ -43,17 +42,17 @@ const castleBlueprintSequence = [
   { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 320 }, size: 'medium' as const },
 ];
 
-// Airplane blueprint sequence
+// Airplane blueprint sequence - proper airplane shape
 const airplaneBlueprintSequence = [
   { id: 'plane-body', type: 'rectangle' as ShapeType, position: { x: 400, y: 300 }, size: 'large' as const },
   { id: 'plane-nose', type: 'triangle' as ShapeType, position: { x: 480, y: 300 }, size: 'medium' as const },
-  { id: 'plane-wing-top', type: 'rectangle' as ShapeType, position: { x: 400, y: 240 }, size: 'medium' as const },
-  { id: 'plane-wing-bottom', type: 'rectangle' as ShapeType, position: { x: 400, y: 360 }, size: 'medium' as const },
-  { id: 'plane-tail', type: 'triangle' as ShapeType, position: { x: 320, y: 280 }, size: 'medium' as const },
-  { id: 'plane-tail-fin', type: 'triangle' as ShapeType, position: { x: 320, y: 320 }, size: 'medium' as const },
+  { id: 'plane-wing-left', type: 'rectangle' as ShapeType, position: { x: 350, y: 300 }, size: 'medium' as const },
+  { id: 'plane-wing-right', type: 'rectangle' as ShapeType, position: { x: 450, y: 300 }, size: 'medium' as const },
+  { id: 'plane-tail', type: 'triangle' as ShapeType, position: { x: 320, y: 300 }, size: 'medium' as const },
+  { id: 'plane-tail-fin', type: 'triangle' as ShapeType, position: { x: 320, y: 260 }, size: 'small' as const },
   { id: 'propeller', type: 'circle' as ShapeType, position: { x: 500, y: 300 }, size: 'small' as const },
-  { id: 'cloud-1', type: 'circle' as ShapeType, position: { x: 150, y: 150 }, size: 'medium' as const },
-  { id: 'cloud-2', type: 'circle' as ShapeType, position: { x: 650, y: 180 }, size: 'medium' as const },
+  { id: 'cloud-1', type: 'circle' as ShapeType, position: { x: 150, y: 180 }, size: 'medium' as const },
+  { id: 'cloud-2', type: 'circle' as ShapeType, position: { x: 600, y: 200 }, size: 'medium' as const },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
