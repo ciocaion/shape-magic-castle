@@ -29,7 +29,7 @@ export interface GameState {
   };
 }
 
-// Compact castle blueprint sequence - proper castle formation with bottom alignment
+// Compact castle blueprint sequence - proper castle formation with precise alignment
 const blueprintSequence = [
   // Main Castle Base (purple square, centered bottom) - ground level at y: 350
   { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
@@ -37,16 +37,16 @@ const blueprintSequence = [
   { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
   // Right Tower (blue rectangle, positioned on right side, bottom-aligned with base)
   { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
-  // Center Tower (blue rectangle, positioned directly above castle base)
-  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 270 }, size: 'medium' as const },
-  // Left Roof (green triangle, positioned directly on top of left tower)
-  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 255 }, size: 'medium' as const },
-  // Right Roof (green triangle, positioned directly on top of right tower)
-  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 255 }, size: 'medium' as const },
-  // Center Roof (green triangle, positioned directly on top of center tower)
-  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 200 }, size: 'medium' as const },
-  // Sun (orange circle, positioned in top-left area)
-  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 80 }, size: 'medium' as const },
+  // Center Tower (blue rectangle, positioned behind square with bottom aligned to square's center)
+  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
+  // Left Roof (green triangle, positioned almost on top of left tower)
+  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 280 }, size: 'medium' as const },
+  // Right Roof (green triangle, positioned almost on top of right tower)
+  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 280 }, size: 'medium' as const },
+  // Center Roof (green triangle, positioned almost on top of center tower)
+  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 250 }, size: 'medium' as const },
+  // Sun (orange circle, positioned lower in the left area)
+  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 150 }, size: 'medium' as const },
   // Tree Trunk (small blue rectangle, positioned to the right of castle, bottom-aligned)
   { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
   // Tree Top (yellow pentagon, positioned directly on top of tree trunk)
