@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
+import { Button } from './ui/button';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
@@ -38,9 +38,14 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     }
   };
 
+  const handleBuildAnother = () => {
+    console.log('Building another shape: airplane');
+    // TODO: Implement airplane building functionality
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* View Toggle - moved outside main content for guaranteed visibility */}
+      {/* View Toggle and Build Another Button */}
       <div className="mb-4 flex gap-2 z-30 relative">
         <button
           onClick={() => setView3D(false)}
@@ -62,6 +67,14 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
         >
           3D View ({filledCount}/{slots.length})
         </button>
+        {allSlotsCompleted && (
+          <Button
+            onClick={handleBuildAnother}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            Build Another Shape (now airplane)
+          </Button>
+        )}
       </div>
       <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
         {view3D ? (
