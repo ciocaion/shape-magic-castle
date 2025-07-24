@@ -3,21 +3,30 @@ import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
 import { Button } from './ui/button';
+import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
   slots: CastleSlotType[];
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
   onBuildAnother?: () => void;
+  onShapePositionUpdate?: (slotId: string, position: { x: number; y: number }) => void;
 }
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
   slots, 
   onShapePlaced, 
-  onBuildAnother 
+  onBuildAnother,
+  onShapePositionUpdate
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
+  const [placedShapes, setPlacedShapes] = useState<Array<{
+    id: string;
+    type: ShapeType;
+    position: { x: number; y: number };
+    size: 'small' | 'medium' | 'large';
+  }>>([]);
 
   // Calculate if all slots are completed
   const allSlotsCompleted = slots.every(slot => slot.filled);
@@ -44,8 +53,34 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
     }
   };
 
+  const handleBlueprintDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const newShape = {
+        id: `free-${Date.now()}`,
+        type: data.type as ShapeType,
+        position: { x, y },
+        size: 'medium' as const
+      };
+      
+      setPlacedShapes(prev => [...prev, newShape]);
+    } catch (error) {
+      console.error('Error placing shape:', error);
+    }
+  };
+
+  const handleBlueprintDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   const handleBuildAnother = () => {
     if (onBuildAnother) {
+      setPlacedShapes([]);
       onBuildAnother();
     }
   };
@@ -97,7 +132,11 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
           </div>
         ) : (
           /* Blueprint View */
-          <>
+          <div 
+            className="relative w-full h-full"
+            onDrop={handleBlueprintDrop}
+            onDragOver={handleBlueprintDragOver}
+          >
             {/* Blueprint Construction Grid */}
             <div 
               className="absolute inset-0 opacity-20"
@@ -107,11 +146,11 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
               }}
             />
             {/* Blueprint Title Banner */}
-            <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
+            <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40 z-10">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">CASTLE CONSTRUCTION BLUEPRINT</span>
             </div>
             {/* Blueprint revision marker */}
-            <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
+            <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30 z-10">
               <span className="text-cyan-400 font-mono text-xs">REV 001</span>
             </div>
             {/* Render Blueprint Castle Slots */}
@@ -123,6 +162,25 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
                 hasError={dragError === slot.id}
               />
             ))}
+            {/* Render freely placed shapes */}
+            {placedShapes.map((shape) => (
+              <div
+                key={shape.id}
+                className="absolute cursor-move"
+                style={{
+                  left: `${shape.position.x}px`,
+                  top: `${shape.position.y}px`,
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <DraggableShape 
+                  type={shape.type}
+                  size={shape.size}
+                  is3D={true}
+                  isDropped={true}
+                />
+              </div>
+            ))}
             {/* Blueprint measurement lines */}
             <div className="absolute inset-0 pointer-events-none opacity-10">
               <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-400" />
@@ -132,7 +190,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
               <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-400" />
               <div className="absolute left-3/4 top-0 bottom-0 w-px bg-cyan-400" />
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
