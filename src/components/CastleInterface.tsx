@@ -38,6 +38,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
 
   // Calculate if all slots are completed
   const blueprintSlots = slots.filter(slot => !slot.isExploreMode);
+  const exploreSlots = slots.filter(slot => slot.isExploreMode);
   const allSlotsCompleted = blueprintSlots.every(slot => slot.filled);
   const filledCount = blueprintSlots.filter(slot => slot.filled).length;
   
@@ -47,6 +48,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
     totalSlots: blueprintSlots.length,
     view3D,
     isExploreMode,
+    exploreSlots: exploreSlots.length,
     slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled, type: s.type, isExploreMode: s.isExploreMode }))
   });
 
@@ -111,29 +113,23 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       <div className="mb-4 flex gap-2 z-30 relative">
         <button
           onClick={() => setView3D(false)}
-          disabled={isExploreMode} // Disable 3D view in explore mode
           className={`px-4 py-2 rounded-lg transition-all ${
             !view3D 
               ? 'bg-primary text-primary-foreground' 
-              : isExploreMode 
-                ? 'bg-muted/50 text-muted-foreground/50 cursor-not-allowed'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
           Blueprint View
         </button>
         <button
           onClick={() => setView3D(true)}
-          disabled={isExploreMode} // Disable 3D view in explore mode
           className={`px-4 py-2 rounded-lg transition-all ${
             view3D 
               ? 'bg-primary text-primary-foreground' 
-              : isExploreMode 
-                ? 'bg-muted/50 text-muted-foreground/50 cursor-not-allowed'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          3D View ({filledCount}/{blueprintSlots.length})
+          {isExploreMode ? `3D View (${exploreSlots.length})` : `3D View (${filledCount}/${blueprintSlots.length})`}
         </button>
         
         {/* Explore Mode Button - in same line, green color */}
@@ -152,13 +148,13 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        {view3D && !isExploreMode ? (
-          /* 3D Scene View - only show if not in explore mode */
+        {view3D ? (
+          /* 3D Scene View - show explore shapes in explore mode, blueprint shapes otherwise */
           <div className="relative w-full h-full">
-            <ThreeDCastleScene slots={slots.filter(slot => !slot.isExploreMode)} />
+            <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} />
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">
-                3D CASTLE VIEW
+                {isExploreMode ? '3D EXPLORE VIEW' : '3D CASTLE VIEW'}
               </span>
             </div>
           </div>
