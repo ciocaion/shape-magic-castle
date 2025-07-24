@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
@@ -17,8 +16,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -48,35 +45,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (slot.filled) {
-      setIsDragging(true);
-      const rect = e.currentTarget.getBoundingClientRect();
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging && slot.filled) {
-      const container = e.currentTarget.closest('.relative');
-      if (container) {
-        const containerRect = container.getBoundingClientRect();
-        const newX = e.clientX - containerRect.left - dragOffset.x;
-        const newY = e.clientY - containerRect.top - dragOffset.y;
-        
-        // Update position through parent component
-        // This would need to be implemented in the parent
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
   // Only render if active, filled, or locked
   if (!slot.active && !slot.filled && !slot.locked) return null;
 
@@ -93,16 +61,16 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   // Size mapping for slot containers
   const sizeMap = {
     large: { width: 80, height: 80 },
-    medium: { width: 32, height: 96 },
+    medium: { width: 32, height: 96 }, // tall rectangles when dropped - significantly taller than square
     small: { width: 20, height: 32 },
   };
   const slotSize = sizeMap[slot.size || 'medium'];
 
-  // Filled or locked: show the shape (now draggable)
+  // Filled or locked: show the shape
   if (slot.filled || slot.locked) {
     return (
       <div
-        className={`absolute cursor-move ${isDragging ? 'z-50' : ''}`}
+        className="absolute"
         style={{ 
           left: `${slot.position.x}px`, 
           top: `${slot.position.y}px`,
@@ -110,13 +78,8 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           width: `${slotSize.width}px`,
           height: `${slotSize.height}px`,
         }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
       >
-        <div className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''} ${isDragging ? 'opacity-70' : ''}`} 
-             style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
+        <div className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''}`} style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
           <DraggableShape 
             type={slot.type}
             size={slot.size || 'medium'}
