@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -28,56 +29,48 @@ export interface GameState {
   };
 }
 
-// Castle blueprint sequence
-const castleBlueprintSequence = [
+// Compact castle blueprint sequence - proper castle formation with bottom alignment
+const blueprintSequence = [
+  // Main Castle Base (purple square, centered bottom) - ground level at y: 350
   { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
-  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
+  // Left Tower (blue rectangle, positioned on left side, bottom-aligned with base)
   { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
+  // Right Tower (blue rectangle, positioned on right side, bottom-aligned with base)
   { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
-  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 290 }, size: 'medium' as const },
-  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 290 }, size: 'medium' as const },
-  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 260 }, size: 'medium' as const },
-  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 200 }, size: 'medium' as const },
+  // Center Tower (blue rectangle, positioned directly above castle base)
+  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 270 }, size: 'medium' as const },
+  // Left Roof (green triangle, positioned directly on top of left tower)
+  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 255 }, size: 'medium' as const },
+  // Right Roof (green triangle, positioned directly on top of right tower)
+  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 255 }, size: 'medium' as const },
+  // Center Roof (green triangle, positioned directly on top of center tower)
+  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 200 }, size: 'medium' as const },
+  // Sun (orange circle, positioned in top-left area)
+  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 80 }, size: 'medium' as const },
+  // Tree Trunk (small blue rectangle, positioned to the right of castle, bottom-aligned)
   { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
+  // Tree Top (yellow pentagon, positioned directly on top of tree trunk)
   { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 320 }, size: 'medium' as const },
 ];
 
-// Airplane blueprint sequence - matching the screenshot layout
-const airplaneBlueprintSequence = [
-  { id: 'plane-body', type: 'rectangle' as ShapeType, position: { x: 400, y: 300 }, size: 'large' as const },
-  { id: 'plane-nose', type: 'triangle' as ShapeType, position: { x: 520, y: 300 }, size: 'medium' as const },
-  { id: 'plane-wing-top', type: 'rectangle' as ShapeType, position: { x: 400, y: 260 }, size: 'medium' as const },
-  { id: 'plane-wing-bottom', type: 'rectangle' as ShapeType, position: { x: 400, y: 340 }, size: 'medium' as const },
-  { id: 'plane-tail-body', type: 'rectangle' as ShapeType, position: { x: 300, y: 300 }, size: 'small' as const },
-  { id: 'plane-tail-fin', type: 'triangle' as ShapeType, position: { x: 300, y: 260 }, size: 'small' as const },
-  { id: 'propeller', type: 'circle' as ShapeType, position: { x: 560, y: 300 }, size: 'small' as const },
-  { id: 'cloud-1', type: 'circle' as ShapeType, position: { x: 150, y: 180 }, size: 'medium' as const },
-  { id: 'cloud-2', type: 'circle' as ShapeType, position: { x: 600, y: 200 }, size: 'medium' as const },
-];
-
 export const ShapeShifterCastle: React.FC = () => {
-  const [currentBlueprint, setCurrentBlueprint] = useState<'castle' | 'airplane'>('castle');
+  // Track which slots are filled by id
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
+  // Track the current step in the sequence
   const [currentStep, setCurrentStep] = useState(0);
 
-  const blueprintSequence = currentBlueprint === 'castle' ? castleBlueprintSequence : airplaneBlueprintSequence;
-
+  // Handler for placing a shape
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
     const expected = blueprintSequence[currentStep];
     if (slotId === expected.id && shapeType === expected.type) {
       setFilledSlots(prev => ({ ...prev, [slotId]: true }));
       setCurrentStep(step => step + 1);
     } else {
-      // Incorrect shape or slot: trigger error feedback
+      // Incorrect shape or slot: trigger error feedback (handled in BlueprintCastleSlot)
     }
   };
 
-  const handleBuildAnother = () => {
-    setCurrentBlueprint('airplane');
-    setFilledSlots({});
-    setCurrentStep(0);
-  };
-
+  // Prepare slots for rendering: previous slots are filled, current is active, rest are hidden
   const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
     ...slot,
     filled: !!filledSlots[slot.id],
@@ -114,7 +107,6 @@ export const ShapeShifterCastle: React.FC = () => {
         <CastleInterface
           slots={slots}
           onShapePlaced={handleShapePlaced}
-          onBuildAnother={handleBuildAnother}
         />
       </div>
       {/* Shape Palette */}

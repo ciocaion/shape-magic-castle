@@ -2,20 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
-import { Button } from './ui/button';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
   slots: CastleSlotType[];
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
-  onBuildAnother?: () => void;
 }
 
-export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
-  slots, 
-  onShapePlaced, 
-  onBuildAnother 
-}) => {
+export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShapePlaced }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
 
@@ -44,15 +38,9 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
     }
   };
 
-  const handleBuildAnother = () => {
-    if (onBuildAnother) {
-      onBuildAnother();
-    }
-  };
-
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* View Toggle and Build Another Button */}
+      {/* View Toggle - moved outside main content for guaranteed visibility */}
       <div className="mb-4 flex gap-2 z-30 relative">
         <button
           onClick={() => setView3D(false)}
@@ -74,14 +62,6 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         >
           3D View ({filledCount}/{slots.length})
         </button>
-        {allSlotsCompleted && (
-          <Button
-            onClick={handleBuildAnother}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            Build Another Shape
-          </Button>
-        )}
       </div>
       <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
         {view3D ? (
