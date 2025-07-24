@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
@@ -5,6 +6,7 @@ import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCast
 interface BlueprintCastleSlotProps {
   slot: CastleSlotType;
   onShapeDrop: (slotId: string, shapeType: ShapeType) => void;
+  onRemove?: (shapeId: string) => void;
   hasError?: boolean;
   isExploreMode?: boolean;
 }
@@ -12,6 +14,7 @@ interface BlueprintCastleSlotProps {
 export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({ 
   slot, 
   onShapeDrop, 
+  onRemove,
   hasError,
   isExploreMode = false 
 }) => {
@@ -50,7 +53,14 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
-  // In explore mode, show all shapes without interaction
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRemove) {
+      onRemove(slot.id);
+    }
+  };
+
+  // In explore mode, show all shapes with remove button
   if (isExploreMode && slot.isExploreMode) {
     const sizeMap = {
       large: { width: 80, height: 80 },
@@ -61,7 +71,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
 
     return (
       <div
-        className="absolute"
+        className="absolute group"
         style={{ 
           left: `${slot.position.x}px`, 
           top: `${slot.position.y}px`,
@@ -78,6 +88,14 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             isDropped={true}
           />
         </div>
+        {/* Remove button - only show on hover */}
+        <button
+          onClick={handleRemove}
+          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center hover:bg-red-600 z-10"
+          title="Remove shape"
+        >
+          ×
+        </button>
       </div>
     );
   }

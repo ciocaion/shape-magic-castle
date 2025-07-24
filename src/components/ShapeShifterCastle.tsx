@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -99,6 +100,11 @@ export const ShapeShifterCastle: React.FC = () => {
     setExploreShapes(prev => [...prev, newShape]);
   };
 
+  // Handler for removing shapes in explore mode
+  const handleExploreShapeRemoved = (shapeId: string) => {
+    setExploreShapes(prev => prev.filter(shape => shape.id !== shapeId));
+  };
+
   // Start explore mode
   const handleStartExplore = () => {
     setIsExploreMode(true);
@@ -147,36 +153,17 @@ export const ShapeShifterCastle: React.FC = () => {
         />
       )}
 
-      {/* Explore Mode Controls - Fixed positioning and z-index */}
-      {isCompleted && (
-        <div className="mx-6 mt-6 flex justify-center relative z-50">
-          {!isExploreMode ? (
-            <button
-              onClick={handleStartExplore}
-              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg cursor-pointer"
-              style={{ pointerEvents: 'auto' }}
-            >
-              Explore Shapes
-            </button>
-          ) : (
-            <button
-              onClick={handleExitExplore}
-              className="px-6 py-3 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20 cursor-pointer"
-              style={{ pointerEvents: 'auto' }}
-            >
-              Exit Explore Mode
-            </button>
-          )}
-        </div>
-      )}
-
       {/* Main Game Area */}
       <div className="flex-1 flex flex-col">
         <CastleInterface
           slots={slots}
           onShapePlaced={handleShapePlaced}
           onExploreShapePlaced={handleExploreShapePlaced}
+          onExploreShapeRemoved={handleExploreShapeRemoved}
           isExploreMode={isExploreMode}
+          isCompleted={isCompleted}
+          onStartExplore={handleStartExplore}
+          onExitExplore={handleExitExplore}
         />
       </div>
 

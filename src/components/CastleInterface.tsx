@@ -8,14 +8,22 @@ interface CastleInterfaceProps {
   slots: CastleSlotType[];
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
   onExploreShapePlaced?: (position: { x: number; y: number }, shapeType: ShapeType) => void;
+  onExploreShapeRemoved?: (shapeId: string) => void;
   isExploreMode?: boolean;
+  isCompleted?: boolean;
+  onStartExplore?: () => void;
+  onExitExplore?: () => void;
 }
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
   slots, 
   onShapePlaced, 
   onExploreShapePlaced,
-  isExploreMode = false 
+  onExploreShapeRemoved,
+  isExploreMode = false,
+  isCompleted = false,
+  onStartExplore,
+  onExitExplore
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
@@ -71,9 +79,15 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
     }
   };
 
+  const handleExploreShapeRemove = (shapeId: string) => {
+    if (onExploreShapeRemoved) {
+      onExploreShapeRemoved(shapeId);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* View Toggle - moved outside main content for guaranteed visibility */}
+      {/* View Toggle with Explore Mode - all in same line */}
       <div className="mb-4 flex gap-2 z-30 relative">
         <button
           onClick={() => setView3D(false)}
@@ -95,6 +109,29 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         >
           3D View ({filledCount}/{blueprintSlots.length})
         </button>
+        
+        {/* Explore Mode Controls - in same line, green color */}
+        {isCompleted && (
+          <>
+            {!isExploreMode ? (
+              <button
+                onClick={onStartExplore}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg cursor-pointer"
+                style={{ pointerEvents: 'auto' }}
+              >
+                Explore Shapes
+              </button>
+            ) : (
+              <button
+                onClick={onExitExplore}
+                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20 cursor-pointer"
+                style={{ pointerEvents: 'auto' }}
+              >
+                Exit Explore
+              </button>
+            )}
+          </>
+        )}
       </div>
       
       <div 
@@ -138,6 +175,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
                 key={slot.id}
                 slot={slot}
                 onShapeDrop={handleShapeDrop}
+                onRemove={slot.isExploreMode ? handleExploreShapeRemove : undefined}
                 hasError={dragError === slot.id}
                 isExploreMode={isExploreMode}
               />
