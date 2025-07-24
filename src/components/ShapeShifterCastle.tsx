@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -65,6 +64,13 @@ export const ShapeShifterCastle: React.FC = () => {
   const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
 
   const isCompleted = currentStep >= blueprintSequence.length;
+
+  console.log('ShapeShifterCastle render:', { 
+    isCompleted, 
+    currentStep, 
+    totalSteps: blueprintSequence.length,
+    isExploreMode 
+  });
 
   // Handler for placing a shape in blueprint mode
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
@@ -141,20 +147,22 @@ export const ShapeShifterCastle: React.FC = () => {
         />
       )}
 
-      {/* Explore Mode Controls */}
+      {/* Explore Mode Controls - Fixed positioning and z-index */}
       {isCompleted && (
-        <div className="mx-6 mt-6 flex justify-center">
+        <div className="mx-6 mt-6 flex justify-center relative z-50">
           {!isExploreMode ? (
             <button
               onClick={handleStartExplore}
-              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
+              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg cursor-pointer"
+              style={{ pointerEvents: 'auto' }}
             >
               Explore Shapes
             </button>
           ) : (
             <button
               onClick={handleExitExplore}
-              className="px-6 py-3 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20"
+              className="px-6 py-3 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20 cursor-pointer"
+              style={{ pointerEvents: 'auto' }}
             >
               Exit Explore Mode
             </button>
