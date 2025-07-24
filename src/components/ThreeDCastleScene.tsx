@@ -40,15 +40,15 @@ const Shape3D: React.FC<{
   const blueprintWidth = 800;
   const blueprintHeight = 600;
   
-  // For explore mode shapes, use direct position mapping
+  // For explore mode shapes, use direct position mapping with better spacing
   if (slot.isExploreMode) {
-    const scaleFactor = 0.015;
+    const scaleFactor = 0.01; // Reduced for better spacing
     const x3d = (slot.position.x - blueprintWidth / 2) * scaleFactor;
     const y3d = -(slot.position.y - blueprintHeight / 2) * scaleFactor;
     const position: [number, number, number] = [x3d, y3d, 0];
     
-    // Apply rotation from explore mode
-    const rotationZ = (slot.rotation || 0) * (Math.PI / 180); // Convert degrees to radians
+    // Apply rotation from explore mode - convert degrees to radians and apply to Z-axis
+    const rotationZ = (slot.rotation || 0) * (Math.PI / 180);
     
     return (
       <mesh 
@@ -109,11 +109,11 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
     case 'triangle':
       return (
         <>
-          <coneGeometry args={[1 * sizeMultiplier, 1.0 * sizeMultiplier, 3]} />
+          <coneGeometry args={[0.8 * sizeMultiplier, 1.2 * sizeMultiplier, 3]} />
           <meshStandardMaterial color="#10b981" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.ConeGeometry(1 * sizeMultiplier, 1.0 * sizeMultiplier, 3)]} />
+              <edgesGeometry args={[new THREE.ConeGeometry(0.8 * sizeMultiplier, 1.2 * sizeMultiplier, 3)]} />
               <lineBasicMaterial color="#06d6a0" />
             </lineSegments>
           )}
@@ -122,11 +122,11 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
     case 'circle':
       return (
         <>
-          <sphereGeometry args={[0.5 * sizeMultiplier, 32, 32]} />
+          <sphereGeometry args={[0.6 * sizeMultiplier, 32, 32]} />
           <meshStandardMaterial color="#fbbf24" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.SphereGeometry(0.5 * sizeMultiplier, 16, 16)]} />
+              <edgesGeometry args={[new THREE.SphereGeometry(0.6 * sizeMultiplier, 16, 16)]} />
               <lineBasicMaterial color="#fde047" />
             </lineSegments>
           )}
@@ -135,11 +135,11 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
     case 'square':
       return (
         <>
-          <boxGeometry args={[1 * sizeMultiplier, 1 * sizeMultiplier, 1 * sizeMultiplier]} />
+          <boxGeometry args={[1.2 * sizeMultiplier, 1.2 * sizeMultiplier, 1.2 * sizeMultiplier]} />
           <meshStandardMaterial color="#ef4444" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.BoxGeometry(1 * sizeMultiplier, 1 * sizeMultiplier, 1 * sizeMultiplier)]} />
+              <edgesGeometry args={[new THREE.BoxGeometry(1.2 * sizeMultiplier, 1.2 * sizeMultiplier, 1.2 * sizeMultiplier)]} />
               <lineBasicMaterial color="#f87171" />
             </lineSegments>
           )}
@@ -148,11 +148,11 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
     case 'pentagon':
       return (
         <>
-          <cylinderGeometry args={[0.5 * sizeMultiplier, 0.5 * sizeMultiplier, 1 * sizeMultiplier, 5]} />
+          <cylinderGeometry args={[0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 5]} />
           <meshStandardMaterial color="#22c55e" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.5 * sizeMultiplier, 0.5 * sizeMultiplier, 1 * sizeMultiplier, 5)]} />
+              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 5)]} />
               <lineBasicMaterial color="#4ade80" />
             </lineSegments>
           )}
@@ -161,11 +161,11 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
     case 'hexagon':
       return (
         <>
-          <cylinderGeometry args={[0.5 * sizeMultiplier, 0.5 * sizeMultiplier, 1 * sizeMultiplier, 6]} />
+          <cylinderGeometry args={[0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 6]} />
           <meshStandardMaterial color="#ec4899" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.5 * sizeMultiplier, 0.5 * sizeMultiplier, 1 * sizeMultiplier, 6)]} />
+              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 6)]} />
               <lineBasicMaterial color="#f472b6" />
             </lineSegments>
           )}
@@ -176,17 +176,17 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
         <>
           {slot.size === 'small' ? (
             // Thin and tall for tree trunk
-            <boxGeometry args={[0.5 * sizeMultiplier, 1.5 * sizeMultiplier, 1 * sizeMultiplier]} />
+            <boxGeometry args={[0.4 * sizeMultiplier, 1.8 * sizeMultiplier, 1.2 * sizeMultiplier]} />
           ) : (
-            // Tall rectangles for towers - significantly taller than square
-            <boxGeometry args={[0.8 * sizeMultiplier, 2.4 * sizeMultiplier, 1 * sizeMultiplier]} />
+            // Tall rectangles for towers - with proper spacing
+            <boxGeometry args={[1.0 * sizeMultiplier, 2.8 * sizeMultiplier, 1.2 * sizeMultiplier]} />
           )}
           <meshStandardMaterial color="#8b5cf6" />
           {slot.showSymmetry && (
             <lineSegments>
               <edgesGeometry args={slot.size === 'small' ? 
-                [new THREE.BoxGeometry(0.5 * sizeMultiplier, 1.5 * sizeMultiplier, 1 * sizeMultiplier)] :
-                [new THREE.BoxGeometry(0.8 * sizeMultiplier, 2.4 * sizeMultiplier, 1 * sizeMultiplier)]
+                [new THREE.BoxGeometry(0.4 * sizeMultiplier, 1.8 * sizeMultiplier, 1.2 * sizeMultiplier)] :
+                [new THREE.BoxGeometry(1.0 * sizeMultiplier, 2.8 * sizeMultiplier, 1.2 * sizeMultiplier)]
               } />
               <lineBasicMaterial color="#a78bfa" />
             </lineSegments>
@@ -221,14 +221,14 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
 
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+      <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
         
         {/* Back button when a shape is isolated */}
         {isolatedShapeId && (
-          <Html position={[-3.5, 3, 0]}>
+          <Html position={[-4, 4, 0]}>
             <button 
               onClick={handleBackClick}
               className="bg-card rounded-gradeaid p-3 shadow-gradeaid border-l-[6px] border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
@@ -256,7 +256,7 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
             isIsolated={isolatedShapeId === slot.id}
           />
         ))}
-        <OrbitControls enableZoom={false} enablePan={false} />
+        <OrbitControls enableZoom={true} enablePan={true} />
       </Canvas>
     </div>
   );
