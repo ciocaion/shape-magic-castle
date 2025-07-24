@@ -26,28 +26,28 @@ export interface GameState {
   };
 }
 
-// Step-by-step sequence for the castle blueprint
+// Compact castle blueprint sequence
 const blueprintSequence = [
-  // Back Tower (tall rectangle, positioned behind square - rendered first)
-  { id: 'tower-back', type: 'rectangle', position: { x: 400, y: 280 }, size: 'medium' },
-  // Main Castle Base (large square, rendered on top of back tower)
-  { id: 'castle-base', type: 'square', position: { x: 400, y: 300 }, size: 'large' },
-  // Left Tower (tall rectangle, very close to left edge of square)
-  { id: 'tower-left', type: 'rectangle', position: { x: 344, y: 300 }, size: 'medium' },
-  // Right Tower (tall rectangle, very close to right edge of square)
-  { id: 'tower-right', type: 'rectangle', position: { x: 456, y: 300 }, size: 'medium' },
-  // Left Roof (triangle above left tower)
-  { id: 'roof-left', type: 'triangle', position: { x: 344, y: 252 }, size: 'medium' },
-  // Right Roof (triangle above right tower)
-  { id: 'roof-right', type: 'triangle', position: { x: 456, y: 252 }, size: 'medium' },
-  // Back Roof (triangle above back tower)
-  { id: 'roof-back', type: 'triangle', position: { x: 400, y: 232 }, size: 'medium' },
-  // Tree Trunk (thin vertical rectangle, closer to castle, bottom-aligned)
-  { id: 'tree-trunk', type: 'rectangle', position: { x: 550, y: 300 }, size: 'small' },
-  // Tree Top (green pentagon, on top of trunk - closer to castle)
-  { id: 'tree-top', type: 'pentagon', position: { x: 550, y: 268 }, size: 'medium' },
-  // Sun (circle, closer to castle - brought down even more)
-  { id: 'sun', type: 'circle', position: { x: 250, y: 200 }, size: 'medium' },
+  // Main Castle Base (purple square, centered)
+  { id: 'castle-base', type: 'square', position: { x: 400, y: 340 }, size: 'large' },
+  // Left Tower (blue rectangle, touching left side of square)
+  { id: 'tower-left', type: 'rectangle', position: { x: 320, y: 300 }, size: 'medium' },
+  // Right Tower (blue rectangle, touching right side of square)
+  { id: 'tower-right', type: 'rectangle', position: { x: 480, y: 300 }, size: 'medium' },
+  // Center Tower (blue rectangle, above square base)
+  { id: 'tower-center', type: 'rectangle', position: { x: 400, y: 260 }, size: 'medium' },
+  // Left Roof (green triangle, directly on top of left tower)
+  { id: 'roof-left', type: 'triangle', position: { x: 320, y: 220 }, size: 'medium' },
+  // Right Roof (green triangle, directly on top of right tower)
+  { id: 'roof-right', type: 'triangle', position: { x: 480, y: 220 }, size: 'medium' },
+  // Center Roof (green triangle, directly on top of center tower)
+  { id: 'roof-center', type: 'triangle', position: { x: 400, y: 180 }, size: 'medium' },
+  // Sun (orange circle, top-left corner, far from castle)
+  { id: 'sun', type: 'circle', position: { x: 150, y: 120 }, size: 'medium' },
+  // Tree Trunk (small blue rectangle, right side of castle, bottom-aligned with base)
+  { id: 'tree-trunk', type: 'rectangle', position: { x: 580, y: 340 }, size: 'small' },
+  // Tree Top (yellow pentagon, directly on top of trunk)
+  { id: 'tree-top', type: 'pentagon', position: { x: 580, y: 300 }, size: 'medium' },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
