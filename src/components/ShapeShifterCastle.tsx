@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -46,10 +47,10 @@ const blueprintSequence = [
   { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 272 }, size: 'medium' as const },
   // Sun (orange circle, positioned lower in the left area)
   { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 150 }, size: 'medium' as const },
-  // Tree Trunk (medium blue rectangle, positioned to the right of castle, bottom-aligned)
-  { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'medium' as const },
+  // Tree Trunk (small thin rectangle, positioned to the right of castle, bottom-aligned)
+  { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
   // Tree Top (yellow pentagon, positioned directly on top of tree trunk)
-  { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 334 }, size: 'medium' as const },
+  { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 318 }, size: 'medium' as const },
 ];
 
 export const ShapeShifterCastle: React.FC = () => {

@@ -22,7 +22,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   const [isDragging, setIsDragging] = useState(false);
 
   const sizeClasses = {
-    small: 'w-[20px] h-[32px]', // thin and tall for tree trunk
+    small: type === 'rectangle' ? 'w-[16px] h-[64px]' : 'w-[32px] h-[32px]', // thin and tall for tree trunk, normal for others
     medium: type === 'rectangle' ? (isDropped ? 'w-[32px] h-[96px]' : 'w-[64px] h-[40px]') : 'w-[48px] h-[48px]', // rectangles are wide in palette, tall when dropped, others are square
     large: 'w-[80px] h-[80px]' // significantly bigger for castle base
   };
