@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
@@ -105,14 +104,9 @@ export const ShapeShifterCastle: React.FC = () => {
     setExploreShapes(prev => prev.filter(shape => shape.id !== shapeId));
   };
 
-  // Start explore mode
+  // Start explore mode - no exit needed
   const handleStartExplore = () => {
     setIsExploreMode(true);
-  };
-
-  // Exit explore mode
-  const handleExitExplore = () => {
-    setIsExploreMode(false);
   };
 
   // Prepare slots for rendering
@@ -163,7 +157,6 @@ export const ShapeShifterCastle: React.FC = () => {
           isExploreMode={isExploreMode}
           isCompleted={isCompleted}
           onStartExplore={handleStartExplore}
-          onExitExplore={handleExitExplore}
         />
       </div>
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
@@ -12,7 +11,6 @@ interface CastleInterfaceProps {
   isExploreMode?: boolean;
   isCompleted?: boolean;
   onStartExplore?: () => void;
-  onExitExplore?: () => void;
 }
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
@@ -22,11 +20,17 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   onExploreShapeRemoved,
   isExploreMode = false,
   isCompleted = false,
-  onStartExplore,
-  onExitExplore
+  onStartExplore
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
+
+  // Reset to blueprint view when entering explore mode
+  useEffect(() => {
+    if (isExploreMode) {
+      setView3D(false);
+    }
+  }, [isExploreMode]);
 
   // Calculate if all slots are completed
   const blueprintSlots = slots.filter(slot => !slot.isExploreMode);
@@ -110,27 +114,15 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
           3D View ({filledCount}/{blueprintSlots.length})
         </button>
         
-        {/* Explore Mode Controls - in same line, green color */}
-        {isCompleted && (
-          <>
-            {!isExploreMode ? (
-              <button
-                onClick={onStartExplore}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg cursor-pointer"
-                style={{ pointerEvents: 'auto' }}
-              >
-                Explore Shapes
-              </button>
-            ) : (
-              <button
-                onClick={onExitExplore}
-                className="px-4 py-2 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20 cursor-pointer"
-                style={{ pointerEvents: 'auto' }}
-              >
-                Exit Explore
-              </button>
-            )}
-          </>
+        {/* Explore Mode Button - in same line, green color */}
+        {isCompleted && !isExploreMode && (
+          <button
+            onClick={onStartExplore}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg cursor-pointer"
+            style={{ pointerEvents: 'auto' }}
+          >
+            Explore Shapes
+          </button>
         )}
       </div>
       

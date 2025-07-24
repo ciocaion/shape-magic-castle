@@ -60,6 +60,19 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
+  const handleShapeDragStart = (e: React.DragEvent) => {
+    // Prevent dragging of explore mode shapes to avoid duplication
+    if (isExploreMode && slot.isExploreMode) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Allow dragging from palette but prevent re-dragging placed shapes
+    if (slot.filled || slot.locked) {
+      e.preventDefault();
+    }
+  };
+
   // In explore mode, show all shapes with remove button
   if (isExploreMode && slot.isExploreMode) {
     const sizeMap = {
@@ -80,7 +93,10 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           height: `${slotSize.height}px`,
         }}
       >
-        <div style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
+        <div 
+          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}
+          onDragStart={handleShapeDragStart}
+        >
           <DraggableShape 
             type={slot.type}
             size={slot.size || 'medium'}
@@ -113,7 +129,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     hexagon: 'Add Hexagon',
   };
 
-  // Size mapping for slot containers
   const sizeMap = {
     large: { width: 80, height: 80 },
     medium: { width: 32, height: 96 },
@@ -121,7 +136,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   };
   const slotSize = sizeMap[slot.size || 'medium'];
 
-  // Filled or locked: show the shape
   if (slot.filled || slot.locked) {
     return (
       <div
@@ -134,7 +148,11 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           height: `${slotSize.height}px`,
         }}
       >
-        <div className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''}`} style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
+        <div 
+          className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''}`} 
+          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}
+          onDragStart={handleShapeDragStart}
+        >
           <DraggableShape 
             type={slot.type}
             size={slot.size || 'medium'}
@@ -146,7 +164,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     );
   }
 
-  // Active slot: show glowing outline and prompt
   return (
     <div
       className="absolute"
