@@ -90,20 +90,6 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onRemove) {
-      onRemove(slot.id);
-    }
-  };
-
-  const handleRotate = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onRotate) {
-      onRotate(slot.id);
-    }
-  };
-
   const handleShapeDragStart = (e: React.DragEvent) => {
     // Prevent dragging of blueprint shapes (non-explore mode)
     if (!isExploreMode || !slot.isExploreMode) {
@@ -112,8 +98,30 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRemove) {
+      onRemove(slot.id);
+    }
+  };
+
+  const handleRotate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRotate) {
+      onRotate(slot.id);
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isExploreMode || !slot.isExploreMode || !onMove) return;
+    
+    // Check if the click is on a control button
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.closest('button')) {
+      return; // Don't start dragging if clicking a button
+    }
     
     e.preventDefault();
     e.stopPropagation();
@@ -166,9 +174,10 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
         </div>
         {/* Control buttons - only show on hover and not when dragging */}
         {!isDragging && (
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto">
             <button
               onClick={handleRotate}
+              onMouseDown={(e) => e.stopPropagation()}
               className="w-6 h-6 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 z-10 flex items-center justify-center"
               title="Rotate shape"
             >
@@ -176,6 +185,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             </button>
             <button
               onClick={handleRemove}
+              onMouseDown={(e) => e.stopPropagation()}
               className="w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600 z-10 flex items-center justify-center"
               title="Remove shape"
             >

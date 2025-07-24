@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
@@ -112,20 +111,26 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       <div className="mb-4 flex gap-2 z-30 relative">
         <button
           onClick={() => setView3D(false)}
+          disabled={isExploreMode} // Disable 3D view in explore mode
           className={`px-4 py-2 rounded-lg transition-all ${
             !view3D 
               ? 'bg-primary text-primary-foreground' 
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              : isExploreMode 
+                ? 'bg-muted/50 text-muted-foreground/50 cursor-not-allowed'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
           Blueprint View
         </button>
         <button
           onClick={() => setView3D(true)}
+          disabled={isExploreMode} // Disable 3D view in explore mode
           className={`px-4 py-2 rounded-lg transition-all ${
             view3D 
               ? 'bg-primary text-primary-foreground' 
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              : isExploreMode 
+                ? 'bg-muted/50 text-muted-foreground/50 cursor-not-allowed'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
           3D View ({filledCount}/{blueprintSlots.length})
@@ -147,10 +152,10 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
-        {view3D ? (
-          /* 3D Scene View */
+        {view3D && !isExploreMode ? (
+          /* 3D Scene View - only show if not in explore mode */
           <div className="relative w-full h-full">
-            <ThreeDCastleScene slots={slots} />
+            <ThreeDCastleScene slots={slots.filter(slot => !slot.isExploreMode)} />
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">
                 3D CASTLE VIEW
