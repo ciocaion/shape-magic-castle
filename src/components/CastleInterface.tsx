@@ -7,25 +7,36 @@ import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCast
 interface CastleInterfaceProps {
   slots: CastleSlotType[];
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
+  onExploreShapePlaced?: (position: { x: number; y: number }, shapeType: ShapeType) => void;
+  isExploreMode?: boolean;
 }
 
-export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShapePlaced }) => {
+export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
+  slots, 
+  onShapePlaced, 
+  onExploreShapePlaced,
+  isExploreMode = false 
+}) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
 
   // Calculate if all slots are completed
-  const allSlotsCompleted = slots.every(slot => slot.filled);
-  const filledCount = slots.filter(slot => slot.filled).length;
+  const blueprintSlots = slots.filter(slot => !slot.isExploreMode);
+  const allSlotsCompleted = blueprintSlots.every(slot => slot.filled);
+  const filledCount = blueprintSlots.filter(slot => slot.filled).length;
   
   console.log('CastleInterface render:', { 
     allSlotsCompleted, 
     filledCount, 
-    totalSlots: slots.length,
+    totalSlots: blueprintSlots.length,
     view3D,
-    slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled, type: s.type }))
+    isExploreMode,
+    slotsStatus: slots.map(s => ({ id: s.id, filled: s.filled, type: s.type, isExploreMode: s.isExploreMode }))
   });
 
   const handleShapeDrop = (slotId: string, shapeType: ShapeType) => {
+    if (isExploreMode) return;
+    
     const slot = slots.find(s => s.id === slotId);
     if (!slot) return;
 
@@ -35,6 +46,28 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
     } else {
       setDragError(slotId);
       setTimeout(() => setDragError(null), 500);
+    }
+  };
+
+  const handleCanvasDrop = (e: React.DragEvent) => {
+    if (!isExploreMode || !onExploreShapePlaced) return;
+    
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      onExploreShapePlaced({ x, y }, data.type);
+    } catch (error) {
+      console.error('Error parsing drag data:', error);
+    }
+  };
+
+  const handleCanvasDragOver = (e: React.DragEvent) => {
+    if (isExploreMode) {
+      e.preventDefault();
     }
   };
 
@@ -60,15 +93,19 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          3D View ({filledCount}/{slots.length})
+          3D View ({filledCount}/{blueprintSlots.length})
         </button>
       </div>
-      <div className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden">
+      
+      <div 
+        className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden"
+        onDrop={handleCanvasDrop}
+        onDragOver={handleCanvasDragOver}
+      >
         {view3D ? (
           /* 3D Scene View */
           <div className="relative w-full h-full">
             <ThreeDCastleScene slots={slots} />
-            {/* 3D View Overlay */}
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-sm tracking-wider">
                 3D CASTLE VIEW
@@ -86,14 +123,15 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
                 backgroundSize: '30px 30px'
               }}
             />
-            {/* Blueprint Title Banner */}
             <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
-              <span className="text-cyan-300 font-mono text-sm tracking-wider">CASTLE CONSTRUCTION BLUEPRINT</span>
+              <span className="text-cyan-300 font-mono text-sm tracking-wider">
+                {isExploreMode ? 'EXPLORE MODE - DROP SHAPES ANYWHERE' : 'CASTLE CONSTRUCTION BLUEPRINT'}
+              </span>
             </div>
-            {/* Blueprint revision marker */}
             <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
               <span className="text-cyan-400 font-mono text-xs">REV 001</span>
             </div>
+            
             {/* Render Blueprint Castle Slots */}
             {slots.map((slot) => (
               <BlueprintCastleSlot
@@ -101,17 +139,21 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
                 slot={slot}
                 onShapeDrop={handleShapeDrop}
                 hasError={dragError === slot.id}
+                isExploreMode={isExploreMode}
               />
             ))}
-            {/* Blueprint measurement lines */}
-            <div className="absolute inset-0 pointer-events-none opacity-10">
-              <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-400" />
-              <div className="absolute top-1/2 left-0 right-0 h-px bg-cyan-400" />
-              <div className="absolute top-3/4 left-0 right-0 h-px bg-cyan-400" />
-              <div className="absolute left-1/4 top-0 bottom-0 w-px bg-cyan-400" />
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-400" />
-              <div className="absolute left-3/4 top-0 bottom-0 w-px bg-cyan-400" />
-            </div>
+            
+            {/* Blueprint measurement lines - only show in blueprint mode */}
+            {!isExploreMode && (
+              <div className="absolute inset-0 pointer-events-none opacity-10">
+                <div className="absolute top-1/4 left-0 right-0 h-px bg-cyan-400" />
+                <div className="absolute top-1/2 left-0 right-0 h-px bg-cyan-400" />
+                <div className="absolute top-3/4 left-0 right-0 h-px bg-cyan-400" />
+                <div className="absolute left-1/4 top-0 bottom-0 w-px bg-cyan-400" />
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-cyan-400" />
+                <div className="absolute left-3/4 top-0 bottom-0 w-px bg-cyan-400" />
+              </div>
+            )}
           </>
         )}
       </div>

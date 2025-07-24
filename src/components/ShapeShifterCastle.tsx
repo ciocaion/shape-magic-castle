@@ -16,11 +16,12 @@ export interface CastleSlot {
   active: boolean;
   locked: boolean;
   showSymmetry: boolean;
+  isExploreMode?: boolean;
 }
 
 export interface GameState {
   slots: CastleSlot[];
-  currentTask: 'building' | 'comparison';
+  currentTask: 'building' | 'comparison' | 'explore';
   completedSlots: number;
   totalSlots: number;
   comparisonQuestion?: {
@@ -58,26 +59,61 @@ export const ShapeShifterCastle: React.FC = () => {
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
   // Track the current step in the sequence
   const [currentStep, setCurrentStep] = useState(0);
+  // Track explore mode
+  const [isExploreMode, setIsExploreMode] = useState(false);
+  // Track explore mode shapes
+  const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
 
-  // Handler for placing a shape
+  const isCompleted = currentStep >= blueprintSequence.length;
+
+  // Handler for placing a shape in blueprint mode
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
+    if (isExploreMode) return;
+    
     const expected = blueprintSequence[currentStep];
     if (slotId === expected.id && shapeType === expected.type) {
       setFilledSlots(prev => ({ ...prev, [slotId]: true }));
       setCurrentStep(step => step + 1);
-    } else {
-      // Incorrect shape or slot: trigger error feedback (handled in BlueprintCastleSlot)
     }
   };
 
-  // Prepare slots for rendering: previous slots are filled, current is active, rest are hidden
-  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
-    ...slot,
-    filled: !!filledSlots[slot.id],
-    active: idx === currentStep,
-    locked: idx < currentStep,
-    showSymmetry: false,
-  }));
+  // Handler for placing shapes in explore mode
+  const handleExploreShapePlaced = (position: { x: number; y: number }, shapeType: ShapeType) => {
+    const newShape: CastleSlot = {
+      id: `explore-${Date.now()}-${Math.random()}`,
+      type: shapeType,
+      position,
+      size: 'medium',
+      filled: true,
+      active: false,
+      locked: false,
+      showSymmetry: false,
+      isExploreMode: true,
+    };
+    setExploreShapes(prev => [...prev, newShape]);
+  };
+
+  // Start explore mode
+  const handleStartExplore = () => {
+    setIsExploreMode(true);
+  };
+
+  // Exit explore mode
+  const handleExitExplore = () => {
+    setIsExploreMode(false);
+  };
+
+  // Prepare slots for rendering
+  const slots: CastleSlot[] = [
+    ...blueprintSequence.map((slot, idx) => ({
+      ...slot,
+      filled: !!filledSlots[slot.id],
+      active: idx === currentStep && !isExploreMode,
+      locked: idx < currentStep,
+      showSymmetry: false,
+    })),
+    ...exploreShapes,
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
@@ -89,26 +125,53 @@ export const ShapeShifterCastle: React.FC = () => {
           backgroundSize: '40px 40px'
         }}
       />
-      {/* Subtle Blueprint Corner Markers */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-8 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
         <div className="absolute top-8 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
         <div className="absolute bottom-24 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
         <div className="absolute bottom-24 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
       </div>
-      {/* Progress Bar */}
-      <ProgressBar
-        completed={currentStep}
-        total={blueprintSequence.length}
-        className="m-6"
-      />
+
+      {/* Progress Bar - only show in blueprint mode */}
+      {!isExploreMode && (
+        <ProgressBar
+          completed={currentStep}
+          total={blueprintSequence.length}
+          className="m-6"
+        />
+      )}
+
+      {/* Explore Mode Controls */}
+      {isCompleted && (
+        <div className="mx-6 mt-6 flex justify-center">
+          {!isExploreMode ? (
+            <button
+              onClick={handleStartExplore}
+              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-lg"
+            >
+              Explore Shapes
+            </button>
+          ) : (
+            <button
+              onClick={handleExitExplore}
+              className="px-6 py-3 bg-muted text-muted-foreground rounded-lg font-semibold hover:bg-muted/80 transition-colors shadow-lg border border-muted-foreground/20"
+            >
+              Exit Explore Mode
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Main Game Area */}
       <div className="flex-1 flex flex-col">
         <CastleInterface
           slots={slots}
           onShapePlaced={handleShapePlaced}
+          onExploreShapePlaced={handleExploreShapePlaced}
+          isExploreMode={isExploreMode}
         />
       </div>
+
       {/* Shape Palette */}
       <ShapePalette className="mx-6 mb-6" />
     </div>

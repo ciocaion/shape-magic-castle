@@ -6,18 +6,21 @@ interface BlueprintCastleSlotProps {
   slot: CastleSlotType;
   onShapeDrop: (slotId: string, shapeType: ShapeType) => void;
   hasError?: boolean;
+  isExploreMode?: boolean;
 }
 
 export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({ 
   slot, 
   onShapeDrop, 
-  hasError 
+  hasError,
+  isExploreMode = false 
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [showError, setShowError] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
+    if (isExploreMode && slot.isExploreMode) return;
     e.preventDefault();
     setIsDragOver(true);
   };
@@ -27,6 +30,8 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   };
 
   const handleDrop = (e: React.DragEvent) => {
+    if (isExploreMode && slot.isExploreMode) return;
+    
     e.preventDefault();
     setIsDragOver(false);
     try {
@@ -45,8 +50,40 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     }
   };
 
-  // Only render if active, filled, or locked
-  if (!slot.active && !slot.filled && !slot.locked) return null;
+  // In explore mode, show all shapes without interaction
+  if (isExploreMode && slot.isExploreMode) {
+    const sizeMap = {
+      large: { width: 80, height: 80 },
+      medium: { width: 32, height: 96 },
+      small: { width: 20, height: 32 },
+    };
+    const slotSize = sizeMap[slot.size || 'medium'];
+
+    return (
+      <div
+        className="absolute"
+        style={{ 
+          left: `${slot.position.x}px`, 
+          top: `${slot.position.y}px`,
+          transform: 'translate(-50%, -50%)',
+          width: `${slotSize.width}px`,
+          height: `${slotSize.height}px`,
+        }}
+      >
+        <div style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px` }}>
+          <DraggableShape 
+            type={slot.type}
+            size={slot.size || 'medium'}
+            is3D={true}
+            isDropped={true}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Only render blueprint slots if not in explore mode and not an explore shape
+  if (isExploreMode || (!slot.active && !slot.filled && !slot.locked)) return null;
 
   // Prompt text for each shape type
   const promptMap: Record<string, string> = {
@@ -61,7 +98,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   // Size mapping for slot containers
   const sizeMap = {
     large: { width: 80, height: 80 },
-    medium: { width: 32, height: 96 }, // tall rectangles when dropped - significantly taller than square
+    medium: { width: 32, height: 96 },
     small: { width: 20, height: 32 },
   };
   const slotSize = sizeMap[slot.size || 'medium'];
@@ -112,11 +149,9 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
         `}
         style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
       >
-        {/* Shape hint */}
         <div className="opacity-30">
           <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
         </div>
-        {/* Floating prompt */}
         {slot.active && (
           <div className="absolute left-1/2 top-[-2.5rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
             {promptMap[slot.type]}
