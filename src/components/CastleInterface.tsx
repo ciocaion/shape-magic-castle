@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
@@ -7,9 +8,14 @@ import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCast
 interface CastleInterfaceProps {
   slots: CastleSlotType[];
   onShapePlaced: (slotId: string, shapeType: ShapeType) => void;
+  onBuildAnother?: () => void;
 }
 
-export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShapePlaced }) => {
+export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
+  slots, 
+  onShapePlaced, 
+  onBuildAnother 
+}) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
 
@@ -39,8 +45,9 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
   };
 
   const handleBuildAnother = () => {
-    console.log('Building another shape: airplane');
-    // TODO: Implement airplane building functionality
+    if (onBuildAnother) {
+      onBuildAnother();
+    }
   };
 
   return (
@@ -72,7 +79,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({ slots, onShape
             onClick={handleBuildAnother}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
-            Build Another Shape (now airplane)
+            Build Another Shape
           </Button>
         )}
       </div>
