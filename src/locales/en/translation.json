@@ -1,0 +1,28 @@
+{
+  "tutor": {
+    "intro": "Hey Shape Shifter! 👋\nLet's build a magical castle using shapes! 🧱🔺🟡\nFollow the blueprint, step by step!",
+    "rectangle_base": "This is a 🔷 rectangle!\nIt has 2 long sides and 2 short sides.\nWe'll use it as the base of your castle! 🏰\n➡️ Drag the 🔷 rectangle to the middle of the blueprint!",
+    "square_hall": "This is a 🟪 square!\nAll 4 sides are equal. It's strong and balanced 💪\n➡️ Place the 🟪 square on top of the 🔷 rectangle. It's the big castle hall!",
+    "rectangles_towers": "Let's add 2 more 🔷 rectangles for the tall side towers! 🏰🏰\n➡️ Place one 🔷 on the left... now one 🔷 on the right! Nicely done!",
+    "triangles_roofs": "This is a 🔺 triangle!\nIt has 3 sides and makes a great roof! ⛺\n➡️ Let's place a 🔺 triangle on each tower! That's 3 rooftops total!\n👏 You're roofing like a pro!",
+    "circle_sun": "Here comes the 🟠 circle!\nIt's round, smooth, and has no corners. 🌞\n➡️ Place the 🟠 circle high up in the sky—it's the sun!\n🌟 Let there be light!",
+    "rectangle_trunk": "Let's plant a tree!\nWe'll start with a 🔷 rectangle for the trunk 🌳\n➡️ Place the 🔷 rectangle on the side of your castle.",
+    "pentagon_leaves": "This is a 🟡 pentagon—it has 5 sides!\nWe'll use it as the leafy part of the tree 🍃\n➡️ Place the 🟡 pentagon on top of the 🔷 rectangle. Tree complete!",
+    "blueprint_complete": "🎉 Amazing! Your castle is finished!\n🕹️ Switch to 3D View to see it in full glory!\nUse your mouse to rotate, zoom, and explore!",
+    "explore_mode": "Now it's your turn to be the boss!\nIn Explore Mode, you can drop shapes anywhere!\n💡 Try stacking, rotating, or making your own wacky castle!\n🎠 Treehouse? Robot tower? Go wild!",
+    "encouragements": {
+      "nice_match": "Nice shape match! ✅",
+      "triangle_fits": "That 🔺 triangle fits like a glove! 💯",
+      "try_higher": "Hmm… try placing that one a little higher ⬆️",
+      "awesome_architect": "You're doing awesome, Architect! 🧠✨",
+      "epic_castle": "Your castle is looking epic! 🏰🔥"
+    },
+    "3d_shapes": {
+      "rectangle": "You clicked the 🔷 rectangle! In 3D, it's a rectangular prism 📦\nIt has 6 sides—like a box. Perfect for walls and towers!",
+      "square": "Whoa! That 🟪 square turned into a cube 🎲\nA cube has 6 equal sides, just like a dice!",
+      "triangle": "This 🔺 triangle became a triangular prism ⛰️\nIt looks like a tent—great for making rooftops!",
+      "circle": "Look! The 🟠 circle turned into a sphere 🟠\nIt's perfectly round—like a ball or the sun!",
+      "pentagon": "This 🟡 pentagon is now a pentagonal prism 🪵\nIt has 5 sides on the front and back—kind of like a chunky leaf!"
+    }
+  }
+}

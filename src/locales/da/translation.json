@@ -1,0 +1,28 @@
+{
+  "tutor": {
+    "intro": "Hej Formskifter! 👋\nLad os bygge et magisk slot med former! 🧱🔺🟡\nFølg tegningen, trin for trin!",
+    "rectangle_base": "Dette er et 🔷 rektangel!\nDet har 2 lange sider og 2 korte sider.\nVi bruger det som basis for dit slot! 🏰\n➡️ Træk 🔷 rektanglet til midten af tegningen!",
+    "square_hall": "Dette er et 🟪 kvadrat!\nAlle 4 sider er lige store. Det er stærkt og balanceret 💪\n➡️ Placer 🟪 kvadratet oven på 🔷 rektanglet. Det er den store slotsal!",
+    "rectangles_towers": "Lad os tilføje 2 flere 🔷 rektangler til de høje sidetårne! 🏰🏰\n➡️ Placer et 🔷 til venstre... nu et 🔷 til højre! Flot gjort!",
+    "triangles_roofs": "Dette er en 🔺 trekant!\nDen har 3 sider og laver et fantastisk tag! ⛺\n➡️ Lad os placere en 🔺 trekant på hvert tårn! Det er 3 tage i alt!\n👏 Du tager som en professionel!",
+    "circle_sun": "Her kommer 🟠 cirklen!\nDen er rund, glat og har ingen hjørner. 🌞\n➡️ Placer 🟠 cirklen højt oppe på himlen—det er solen!\n🌟 Lad der være lys!",
+    "rectangle_trunk": "Lad os plante et træ!\nVi starter med et 🔷 rektangel til stammen 🌳\n➡️ Placer 🔷 rektanglet ved siden af dit slot.",
+    "pentagon_leaves": "Dette er en 🟡 femkant—den har 5 sider!\nVi bruger den som den bladrige del af træet 🍃\n➡️ Placer 🟡 femkanten oven på 🔷 stammen. Træ færdigt!",
+    "blueprint_complete": "🎉 Fantastisk! Dit slot er færdigt!\n🕹️ Skift til 3D Visning for at se det i fuld pragt!\nBrug din mus til at rotere, zoome og udforske!",
+    "explore_mode": "Nu er det din tur til at være chefen!\nI Udforsk Tilstand kan du slippe former hvor som helst!\n💡 Prøv at stable, rotere eller lave dit eget skøre slot!\n🎠 Træhus? Robottårn? Gå løs!",
+    "encouragements": {
+      "nice_match": "Flot formtilpasning! ✅",
+      "triangle_fits": "Den 🔺 trekant passer som en handske! 💯",
+      "try_higher": "Hmm… prøv at placere den lidt højere ⬆️",
+      "awesome_architect": "Du klarer det fantastisk, Arkitekt! 🧠✨",
+      "epic_castle": "Dit slot ser episk ud! 🏰🔥"
+    },
+    "3d_shapes": {
+      "rectangle": "Du klikkede på 🔷 rektanglet! I 3D er det et rektangulært prisme 📦\nDet har 6 sider—som en kasse. Perfekt til vægge og tårne!",
+      "square": "Wow! Det 🟪 kvadrat blev til en terning 🎲\nEn terning har 6 lige store sider, ligesom en spilleterning!",
+      "triangle": "Denne 🔺 trekant blev til et trekantet prisme ⛰️\nDet ligner et telt—fantastisk til at lave tage!",
+      "circle": "Se! 🟠 cirklen blev til en kugle 🟠\nDen er perfekt rund—som en bold eller solen!",
+      "pentagon": "Denne 🟡 femkant er nu et femkantet prisme 🪵\nDen har 5 sider på forsiden og bagsiden—lidt som et tykt blad!"
+    }
+  }
+}

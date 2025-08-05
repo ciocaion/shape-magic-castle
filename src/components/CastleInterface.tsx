@@ -108,43 +108,49 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8">
-      {/* View Toggle with Explore Mode - all in same line */}
-      <div className="mb-4 flex gap-2 z-30 relative">
+    <div className="flex-1 flex flex-col items-center justify-center p-1 md:p-4 lg:p-8">
+      {/* View Toggle with Explore Mode - responsive button layout */}
+      <div className="mb-2 md:mb-4 flex flex-col sm:flex-row gap-2 z-30 relative w-full max-w-lg justify-center">
         <button
           onClick={() => setView3D(false)}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-3 py-2 md:px-4 md:py-2 rounded-lg transition-all text-sm md:text-base ${
             !view3D 
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          Blueprint View
+          Blueprint
         </button>
         <button
           onClick={() => setView3D(true)}
-          className={`px-4 py-2 rounded-lg transition-all ${
+          className={`px-3 py-2 md:px-4 md:py-2 rounded-lg transition-all text-sm md:text-base ${
             view3D 
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          {isExploreMode ? `3D View (${exploreSlots.length})` : `3D View (${filledCount}/${blueprintSlots.length})`}
+          <span className="hidden sm:inline">
+            {isExploreMode ? `3D View (${exploreSlots.length})` : `3D View (${filledCount}/${blueprintSlots.length})`}
+          </span>
+          <span className="sm:hidden">
+            {isExploreMode ? `3D (${exploreSlots.length})` : `3D (${filledCount}/${blueprintSlots.length})`}
+          </span>
         </button>
         
-        {/* Explore Mode Button - in same line, green color */}
+        {/* Explore Mode Button - responsive sizing and text */}
         {isCompleted && !isExploreMode && (
           <button
             onClick={onStartExplore}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg"
+            className="px-3 py-2 md:px-4 md:py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg text-sm md:text-base"
           >
-            Explore Shapes
+            <span className="hidden sm:inline">Explore Shapes</span>
+            <span className="sm:hidden">Explore</span>
           </button>
         )}
       </div>
       
       <div 
-        className="relative w-full max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden"
+        className="relative w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
@@ -152,29 +158,55 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
           /* 3D Scene View - show explore shapes in explore mode, blueprint shapes otherwise */
           <div className="relative w-full h-full">
             <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} />
-            <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
-              <span className="text-cyan-300 font-mono text-sm tracking-wider">
-                {isExploreMode ? '3D EXPLORE VIEW' : '3D CASTLE VIEW'}
+            <div className="absolute top-1 left-1 md:top-2 md:left-2 lg:top-4 lg:left-4 px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
+              <span className="text-cyan-300 font-mono text-xs md:text-sm tracking-wider">
+                <span className="hidden sm:inline">
+                  {isExploreMode ? '3D EXPLORE VIEW' : '3D CASTLE VIEW'}
+                </span>
+                <span className="sm:hidden">
+                  {isExploreMode ? '3D EXPLORE' : '3D CASTLE'}
+                </span>
               </span>
             </div>
           </div>
         ) : (
           /* Blueprint View */
           <>
-            {/* Blueprint Construction Grid */}
+            {/* Blueprint Construction Grid - responsive grid size */}
             <div 
-              className="absolute inset-0 opacity-20"
+              className="absolute inset-0 opacity-20 md:hidden"
               style={{
                 backgroundImage: 'var(--blueprint-grid)',
-                backgroundSize: '30px 30px'
+                backgroundSize: '15px 15px' // Smaller on mobile
               }}
             />
-            <div className="absolute top-4 left-4 px-4 py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
-              <span className="text-cyan-300 font-mono text-sm tracking-wider">
-                {isExploreMode ? 'EXPLORE MODE - DROP SHAPES ANYWHERE' : 'CASTLE CONSTRUCTION BLUEPRINT'}
+            <div 
+              className="absolute inset-0 opacity-20 hidden md:block lg:hidden"
+              style={{
+                backgroundImage: 'var(--blueprint-grid)',
+                backgroundSize: '25px 25px' // Medium on tablet
+              }}
+            />
+            <div 
+              className="absolute inset-0 opacity-20 hidden lg:block"
+              style={{
+                backgroundImage: 'var(--blueprint-grid)',
+                backgroundSize: '30px 30px' // Larger on desktop
+              }}
+            />
+            
+            {/* Responsive overlay labels */}
+            <div className="absolute top-1 left-1 md:top-2 md:left-2 lg:top-4 lg:left-4 px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
+              <span className="text-cyan-300 font-mono text-xs md:text-sm tracking-wider">
+                <span className="hidden sm:inline">
+                  {isExploreMode ? 'EXPLORE MODE - DROP SHAPES ANYWHERE' : 'CASTLE CONSTRUCTION BLUEPRINT'}
+                </span>
+                <span className="sm:hidden">
+                  {isExploreMode ? 'EXPLORE MODE' : 'BLUEPRINT'}
+                </span>
               </span>
             </div>
-            <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
+            <div className="absolute top-1 right-1 md:top-2 md:right-2 lg:top-4 lg:right-4 px-2 py-1 md:px-3 md:py-1 bg-cyan-400/10 rounded border border-cyan-400/30">
               <span className="text-cyan-400 font-mono text-xs">REV 001</span>
             </div>
             

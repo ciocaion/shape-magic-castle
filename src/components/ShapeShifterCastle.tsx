@@ -1,9 +1,11 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
+import { tutorService } from '../services/tutorService';
 
 export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'pentagon' | 'hexagon';
 
@@ -46,12 +48,37 @@ const blueprintSequence = [
 ];
 
 export const ShapeShifterCastle: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
   const [currentStep, setCurrentStep] = useState(0);
   const [isExploreMode, setIsExploreMode] = useState(false);
   const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
+  const [hasShownIntro, setHasShownIntro] = useState(false);
 
   const isCompleted = currentStep >= blueprintSequence.length;
+
+  // Language change listener
+  useEffect(() => {
+    const handleLanguageChange = (event: MessageEvent) => {
+      if (event.data.type === 'setFlowLanguage') {
+        const languageCode = event.data.languageCode;
+        i18n.changeLanguage(languageCode);
+      }
+    };
+
+    window.addEventListener('message', handleLanguageChange);
+    return () => window.removeEventListener('message', handleLanguageChange);
+  }, [i18n]);
+
+  // Show intro message when component mounts
+  useEffect(() => {
+    if (!hasShownIntro) {
+      setTimeout(() => {
+        tutorService.sendInstructionMessage(t, 'tutor.intro');
+        setHasShownIntro(true);
+      }, 1000); // Small delay to ensure UI is ready
+    }
+  }, [t, hasShownIntro]);
 
   console.log('ShapeShifterCastle render:', { 
     isCompleted, 
@@ -60,13 +87,60 @@ export const ShapeShifterCastle: React.FC = () => {
     isExploreMode 
   });
 
+  // Get tutor message key based on step and slot
+  const getTutorMessageKey = (step: number, slotId: string): string => {
+    switch (step) {
+      case 0: // tower-center (rectangle)
+        return 'tutor.rectangle_base';
+      case 1: // castle-base (square)
+        return 'tutor.square_hall';
+      case 2: // tower-left (rectangle) - first side tower
+        return 'tutor.rectangles_towers';
+      case 3: // tower-right (rectangle) - second side tower
+        return ''; // Already showed rectangles_towers message
+      case 4: // roof-left (triangle) - first roof
+        return 'tutor.triangles_roofs';
+      case 5: // roof-right (triangle) - second roof
+      case 6: // roof-center (triangle) - third roof
+        return ''; // Already showed triangles_roofs message
+      case 7: // sun (circle)
+        return 'tutor.circle_sun';
+      case 8: // tree-trunk (rectangle)
+        return 'tutor.rectangle_trunk';
+      case 9: // tree-top (pentagon)
+        return 'tutor.pentagon_leaves';
+      default: 
+        return '';
+    }
+  };
+
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
     if (isExploreMode) return;
     
     const expected = blueprintSequence[currentStep];
     if (slotId === expected.id && shapeType === expected.type) {
       setFilledSlots(prev => ({ ...prev, [slotId]: true }));
-      setCurrentStep(step => step + 1);
+      
+      // Send success message for correct placement
+      tutorService.sendSuccessMessage(t, 'tutor.encouragements.nice_match');
+      
+      // Get and send instruction for next step
+      const messageKey = getTutorMessageKey(currentStep, slotId);
+      if (messageKey) {
+        setTimeout(() => {
+          tutorService.sendInstructionMessage(t, messageKey);
+        }, 500);
+      }
+      
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      
+      // Check if blueprint is complete
+      if (newStep >= blueprintSequence.length) {
+        setTimeout(() => {
+          tutorService.sendSuccessMessage(t, 'tutor.blueprint_complete');
+        }, 1000);
+      }
     }
   };
 
@@ -108,6 +182,9 @@ export const ShapeShifterCastle: React.FC = () => {
 
   const handleStartExplore = () => {
     setIsExploreMode(true);
+    setTimeout(() => {
+      tutorService.sendInstructionMessage(t, 'tutor.explore_mode');
+    }, 500);
   };
 
   // Prepare slots for rendering
@@ -124,32 +201,48 @@ export const ShapeShifterCastle: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
-      {/* Blueprint Construction Grid Background */}
+      {/* Blueprint Construction Grid Background - responsive grid size */}
       <div 
         className="absolute inset-0 opacity-30"
         style={{
           backgroundImage: 'var(--blueprint-grid)',
-          backgroundSize: '40px 40px'
+          backgroundSize: '20px 20px' // Smaller on mobile
         }}
       />
+      <div 
+        className="absolute inset-0 opacity-30 hidden md:block"
+        style={{
+          backgroundImage: 'var(--blueprint-grid)',
+          backgroundSize: '30px 30px' // Medium on tablet
+        }}
+      />
+      <div 
+        className="absolute inset-0 opacity-30 hidden lg:block"
+        style={{
+          backgroundImage: 'var(--blueprint-grid)',
+          backgroundSize: '40px 40px' // Larger on desktop
+        }}
+      />
+      
+      {/* Blueprint corner markers - responsive positioning */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-8 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
-        <div className="absolute top-8 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
-        <div className="absolute bottom-24 left-8 w-2 h-2 border border-cyan-400 rotate-45" />
-        <div className="absolute bottom-24 right-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute top-2 left-2 md:top-4 md:left-4 lg:top-8 lg:left-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 lg:top-8 lg:right-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute bottom-16 left-2 md:bottom-20 md:left-4 lg:bottom-24 lg:left-8 w-2 h-2 border border-cyan-400 rotate-45" />
+        <div className="absolute bottom-16 right-2 md:bottom-20 md:right-4 lg:bottom-24 lg:right-8 w-2 h-2 border border-cyan-400 rotate-45" />
       </div>
 
-      {/* Progress Bar - only show in blueprint mode */}
+      {/* Progress Bar - only show in blueprint mode - responsive spacing */}
       {!isExploreMode && (
         <ProgressBar
           completed={currentStep}
           total={blueprintSequence.length}
-          className="m-6"
+          className="mx-2 mt-2 mb-1 md:mx-4 md:mt-4 md:mb-2 lg:mx-6 lg:mt-6 lg:mb-4"
         />
       )}
 
-      {/* Main Game Area */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Game Area - responsive padding */}
+      <div className="flex-1 flex flex-col px-2 md:px-4 lg:px-6">
         <CastleInterface
           slots={slots}
           onShapePlaced={handleShapePlaced}
@@ -163,8 +256,8 @@ export const ShapeShifterCastle: React.FC = () => {
         />
       </div>
 
-      {/* Shape Palette */}
-      <ShapePalette className="mx-6 mb-6" />
+      {/* Shape Palette - responsive positioning and spacing */}
+      <ShapePalette className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6" />
     </div>
   );
 };

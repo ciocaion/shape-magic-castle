@@ -1,10 +1,12 @@
 
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
 import { Html } from '@react-three/drei';
+import { tutorService } from '../services/tutorService';
 
 interface ThreeDCastleSceneProps {
   slots: CastleSlotType[];
@@ -199,6 +201,8 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
 };
 
 export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) => {
+  const { t } = useTranslation();
+  
   // Debug: log which slots are filled and will be rendered
   const filledSlots = slots.filter(slot => slot.filled);
   console.log('ThreeDCastleScene: filled slots for 3D', filledSlots);
@@ -207,6 +211,18 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
   const [isolatedShapeId, setIsolatedShapeId] = useState<string | null>(null);
 
   const handleShapeClick = (slotId: string) => {
+    // Find the clicked slot to get its shape type
+    const clickedSlot = filledSlots.find(slot => slot.id === slotId);
+    if (clickedSlot) {
+      // Send 3D shape learning message based on shape type
+      const messageKey = `tutor.3d_shapes.${clickedSlot.type}`;
+      tutorService.sendInstructionMessage(t, messageKey, { 
+        shapeType: clickedSlot.type,
+        slotId: slotId 
+      });
+    }
+    
+    // Continue with existing isolation functionality
     setIsolatedShapeId(slotId);
   };
 
@@ -226,24 +242,34 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
         
-        {/* Back button when a shape is isolated */}
+        {/* Back button when a shape is isolated - responsive positioning and sizing */}
         {isolatedShapeId && (
           <Html position={[-4, 4, 0]}>
             <button 
               onClick={handleBackClick}
-              className="bg-card rounded-gradeaid p-3 shadow-gradeaid border-l-[6px] border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-2 whitespace-nowrap"
+              className="bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
             >
-              <span className="text-primary font-semibold">←</span>
-              <span className="text-foreground font-medium">Back to Castle View</span>
+              <span className="text-primary font-semibold text-sm md:text-base">←</span>
+              <span className="text-foreground font-medium text-xs md:text-sm">
+                <span className="hidden sm:inline">Back to Castle View</span>
+                <span className="sm:hidden">Back</span>
+              </span>
             </button>
           </Html>
         )}
         
         {filledSlots.length === 0 && (
-          // Show a message in the 3D scene if nothing is placed
+          // Show a responsive message in the 3D scene if nothing is placed
           <Html center>
-            <div style={{ color: '#fff', background: 'rgba(0,0,0,0.7)', padding: '1em', borderRadius: '8px' }}>
-              No shapes placed yet! Switch to Blueprint view and place shapes to see them here.
+            <div className="text-white bg-black/70 p-3 md:p-4 rounded-lg text-center max-w-xs md:max-w-sm">
+              <div className="text-sm md:text-base">
+                <span className="hidden sm:inline">
+                  No shapes placed yet! Switch to Blueprint view and place shapes to see them here.
+                </span>
+                <span className="sm:hidden">
+                  No shapes yet! Use Blueprint view to place shapes.
+                </span>
+              </div>
             </div>
           </Html>
         )}
@@ -256,7 +282,16 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
             isIsolated={isolatedShapeId === slot.id}
           />
         ))}
-        <OrbitControls enableZoom={true} enablePan={true} />
+        <OrbitControls 
+          enableZoom={true} 
+          enablePan={true}
+          enableDamping={true}
+          dampingFactor={0.05}
+          maxDistance={20}
+          minDistance={5}
+          maxPolarAngle={Math.PI / 2}
+          touchAction="pan-y"
+        />
       </Canvas>
     </div>
   );
