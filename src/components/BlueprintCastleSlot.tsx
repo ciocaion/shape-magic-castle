@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DraggableShape } from './DraggableShape';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
@@ -26,6 +27,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   const [showError, setShowError] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const { t } = useTranslation();
 
   // Clean up dragging state when component unmounts or dragging should stop
   useEffect(() => {
@@ -175,11 +177,11 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
         {/* Control buttons - only show on hover and not when dragging */}
         {!isDragging && (
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto">
-            <button
+             <button
               onClick={handleRotate}
               onMouseDown={(e) => e.stopPropagation()}
               className="w-6 h-6 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 z-10 flex items-center justify-center"
-              title="Rotate shape"
+               title={t('ui.rotate_shape')}
             >
               ↻
             </button>
@@ -187,7 +189,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
               onClick={handleRemove}
               onMouseDown={(e) => e.stopPropagation()}
               className="w-6 h-6 bg-red-500 text-white rounded-full text-xs font-bold hover:bg-red-600 z-10 flex items-center justify-center"
-              title="Remove shape"
+               title={t('ui.remove_shape')}
             >
               ×
             </button>
@@ -201,12 +203,12 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   if (isExploreMode || (!slot.active && !slot.filled && !slot.locked)) return null;
 
   const promptMap: Record<string, string> = {
-    square: 'Add Square',
-    rectangle: 'Add Rectangle',
-    triangle: 'Add Triangle',
-    circle: 'Add Circle',
-    pentagon: 'Add Pentagon',
-    hexagon: 'Add Hexagon',
+    square: t('ui.add_shape.square'),
+    rectangle: t('ui.add_shape.rectangle'),
+    triangle: t('ui.add_shape.triangle'),
+    circle: t('ui.add_shape.circle'),
+    pentagon: t('ui.add_shape.pentagon'),
+    hexagon: t('ui.add_shape.hexagon'),
   };
 
   const sizeMap = {

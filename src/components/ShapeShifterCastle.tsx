@@ -57,18 +57,7 @@ export const ShapeShifterCastle: React.FC = () => {
 
   const isCompleted = currentStep >= blueprintSequence.length;
 
-  // Language change listener
-  useEffect(() => {
-    const handleLanguageChange = (event: MessageEvent) => {
-      if (event.data.type === 'setFlowLanguage') {
-        const languageCode = event.data.languageCode;
-        i18n.changeLanguage(languageCode);
-      }
-    };
-
-    window.addEventListener('message', handleLanguageChange);
-    return () => window.removeEventListener('message', handleLanguageChange);
-  }, [i18n]);
+  // Language change handled globally in App
 
   // Show intro message when component mounts
   useEffect(() => {

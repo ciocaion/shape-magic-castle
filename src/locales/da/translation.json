@@ -23,6 +23,60 @@
       "triangle": "Denne 🔺 trekant blev til et trekantet prisme ⛰️\nDet ligner et telt—fantastisk til at lave tage!",
       "circle": "Se! 🟠 cirklen blev til en kugle 🟠\nDen er perfekt rund—som en bold eller solen!",
       "pentagon": "Denne 🟡 femkant er nu et femkantet prisme 🪵\nDen har 5 sider på forsiden og bagsiden—lidt som et tykt blad!"
+    },
+    "no_shapes_hint": "Ingen former placeret endnu! Skift til Blueprint-visning og placer former for at se dem i 3D."
+  }
+  ,
+  "ui": {
+    "back_to_castle": "Tilbage til slotsvisning",
+    "back": "Tilbage",
+    "no_shapes_long": "Ingen former endnu! Skift til Blueprint-visning og placer former for at se dem her.",
+    "no_shapes_short": "Ingen former endnu! Brug Blueprint-visning.",
+    "blueprint": "Blueprint",
+    "view_3d_with_count": "3D Visning ({{count}})",
+    "view_3d_with_progress": "3D Visning ({{filled}}/{{total}})",
+    "view_3d_short_with_count": "3D ({{count}})",
+    "view_3d_short_with_progress": "3D ({{filled}}/{{total}})",
+    "explore_shapes": "Udforsk Former",
+    "explore": "Udforsk",
+    "view_label_3d_explore": "3D UDFORSK VISNING",
+    "view_label_3d_castle": "3D SLOTSVISNING",
+    "view_label_3d_explore_short": "3D UDFORSK",
+    "view_label_3d_castle_short": "3D SLOT",
+    "explore_mode_drop_anywhere": "UDFORSK TILSTAND - SLIP FORMER HVOR SOM HELST",
+    "castle_blueprint": "SLOTS KONSTRUKTIONS BLUEPRINT",
+    "explore_mode_short": "UDFORSK TILSTAND",
+    "blueprint_short": "BLUEPRINT",
+    "construction_tools": "BYGGEVÆRKTØJ",
+    "tools_short": "VÆRKTØJ",
+    "page_not_found": "Ups! Siden blev ikke fundet",
+    "return_home": "Tilbage til Forside",
+    "compare": {
+      "bigger": "Hvilken form er STØRRE?",
+      "more_corners": "Hvilken form har FLERE HJØRNER?",
+      "is_3d": "Hvilken form er 3D (har dybde)?",
+      "default": "Sammenlign formene"
+    },
+    "corners": "{{count}} hjørner",
+    "flat_2d": "Flad (2D)",
+    "solid_3d": "Solid (3D)",
+    "aria_select_shape": "Vælg {{shape}} form",
+    "large": "Stor",
+    "small": "Lille",
+    "3d": "3D",
+    "feedback": {
+      "correct": "✅ Korrekt! Godt klaret!",
+      "wrong": "❌ Prøv igen!"
+    },
+    "rotate_shape": "Drej form",
+    "remove_shape": "Fjern form",
+    "add_shape": {
+      "square": "Tilføj kvadrat",
+      "rectangle": "Tilføj rektangel",
+      "triangle": "Tilføj trekant",
+      "circle": "Tilføj cirkel",
+      "pentagon": "Tilføj femkant",
+      "hexagon": "Tilføj sekskant"
     }
   }
 }

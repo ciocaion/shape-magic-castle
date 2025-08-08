@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text } from '@react-three/drei';
@@ -210,6 +210,13 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
   // State for shape isolation
   const [isolatedShapeId, setIsolatedShapeId] = useState<string | null>(null);
 
+  // If no shapes placed, send an instructional tutor message instead of showing text in UI
+  useEffect(() => {
+    if (filledSlots.length === 0) {
+      tutorService.sendInstructionMessage(t, 'tutor.no_shapes_hint', { context: 'threeDScene' });
+    }
+  }, [filledSlots.length, t]);
+
   const handleShapeClick = (slotId: string) => {
     // Find the clicked slot to get its shape type
     const clickedSlot = filledSlots.find(slot => slot.id === slotId);
@@ -251,28 +258,14 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
             >
               <span className="text-primary font-semibold text-sm md:text-base">←</span>
               <span className="text-foreground font-medium text-xs md:text-sm">
-                <span className="hidden sm:inline">Back to Castle View</span>
-                <span className="sm:hidden">Back</span>
+                <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
+                <span className="sm:hidden">{t('ui.back')}</span>
               </span>
             </button>
           </Html>
         )}
         
-        {filledSlots.length === 0 && (
-          // Show a responsive message in the 3D scene if nothing is placed
-          <Html center>
-            <div className="text-white bg-black/70 p-3 md:p-4 rounded-lg text-center max-w-xs md:max-w-sm">
-              <div className="text-sm md:text-base">
-                <span className="hidden sm:inline">
-                  No shapes placed yet! Switch to Blueprint view and place shapes to see them here.
-                </span>
-                <span className="sm:hidden">
-                  No shapes yet! Use Blueprint view to place shapes.
-                </span>
-              </div>
-            </div>
-          </Html>
-        )}
+        {/* No inline instructional text when there are no shapes; message is sent via tutor service */}
         
         {visibleSlots.map((slot) => (
           <Shape3D 

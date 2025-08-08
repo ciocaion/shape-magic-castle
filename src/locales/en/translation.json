@@ -23,6 +23,60 @@
       "triangle": "This 🔺 triangle became a triangular prism ⛰️\nIt looks like a tent—great for making rooftops!",
       "circle": "Look! The 🟠 circle turned into a sphere 🟠\nIt's perfectly round—like a ball or the sun!",
       "pentagon": "This 🟡 pentagon is now a pentagonal prism 🪵\nIt has 5 sides on the front and back—kind of like a chunky leaf!"
+    },
+    "no_shapes_hint": "No shapes placed yet! Switch to Blueprint view and place shapes to see them in 3D."
+  }
+  ,
+  "ui": {
+    "back_to_castle": "Back to Castle View",
+    "back": "Back",
+    "no_shapes_long": "No shapes placed yet! Switch to Blueprint view and place shapes to see them here.",
+    "no_shapes_short": "No shapes yet! Use Blueprint view to place shapes.",
+    "blueprint": "Blueprint",
+    "view_3d_with_count": "3D View ({{count}})",
+    "view_3d_with_progress": "3D View ({{filled}}/{{total}})",
+    "view_3d_short_with_count": "3D ({{count}})",
+    "view_3d_short_with_progress": "3D ({{filled}}/{{total}})",
+    "explore_shapes": "Explore Shapes",
+    "explore": "Explore",
+    "view_label_3d_explore": "3D EXPLORE VIEW",
+    "view_label_3d_castle": "3D CASTLE VIEW",
+    "view_label_3d_explore_short": "3D EXPLORE",
+    "view_label_3d_castle_short": "3D CASTLE",
+    "explore_mode_drop_anywhere": "EXPLORE MODE - DROP SHAPES ANYWHERE",
+    "castle_blueprint": "CASTLE CONSTRUCTION BLUEPRINT",
+    "explore_mode_short": "EXPLORE MODE",
+    "blueprint_short": "BLUEPRINT",
+    "construction_tools": "CONSTRUCTION TOOLS",
+    "tools_short": "TOOLS",
+    "page_not_found": "Oops! Page not found",
+    "return_home": "Return to Home",
+    "compare": {
+      "bigger": "Which shape is BIGGER?",
+      "more_corners": "Which shape has MORE CORNERS?",
+      "is_3d": "Which shape is 3D (has depth)?",
+      "default": "Compare the shapes"
+    },
+    "corners": "{{count}} corners",
+    "flat_2d": "Flat (2D)",
+    "solid_3d": "Solid (3D)",
+    "aria_select_shape": "Select {{shape}} shape",
+    "large": "Large",
+    "small": "Small",
+    "3d": "3D",
+    "feedback": {
+      "correct": "✅ Correct! Well done!",
+      "wrong": "❌ Try again!"
+    },
+    "rotate_shape": "Rotate shape",
+    "remove_shape": "Remove shape",
+    "add_shape": {
+      "square": "Add Square",
+      "rectangle": "Add Rectangle",
+      "triangle": "Add Triangle",
+      "circle": "Add Circle",
+      "pentagon": "Add Pentagon",
+      "hexagon": "Add Hexagon"
     }
   }
 }

@@ -5,11 +5,12 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslation from './locales/en/translation.json';
 import daTranslation from './locales/da/translation.json';
 
+// Use ISO language codes
 const resources = {
-  EN: {
+  en: {
     translation: enTranslation,
   },
-  DK: {
+  da: {
     translation: daTranslation,
   },
 };
@@ -19,10 +20,10 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'EN', // default language
-    fallbackLng: 'EN',
+    lng: 'en',
+    fallbackLng: ['en', 'da'],
     interpolation: {
-      escapeValue: false, // react already does escaping
+      escapeValue: false,
     },
   });
 

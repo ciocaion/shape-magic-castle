@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
@@ -28,6 +29,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
+  const { t } = useTranslation();
 
   // Force reset to blueprint view when entering explore mode
   useEffect(() => {
@@ -119,7 +121,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
           }`}
         >
-          Blueprint
+          {t('ui.blueprint')}
         </button>
         <button
           onClick={() => setView3D(true)}
@@ -130,10 +132,14 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
           }`}
         >
           <span className="hidden sm:inline">
-            {isExploreMode ? `3D View (${exploreSlots.length})` : `3D View (${filledCount}/${blueprintSlots.length})`}
+            {isExploreMode 
+              ? t('ui.view_3d_with_count', { count: exploreSlots.length }) 
+              : t('ui.view_3d_with_progress', { filled: filledCount, total: blueprintSlots.length })}
           </span>
           <span className="sm:hidden">
-            {isExploreMode ? `3D (${exploreSlots.length})` : `3D (${filledCount}/${blueprintSlots.length})`}
+            {isExploreMode 
+              ? t('ui.view_3d_short_with_count', { count: exploreSlots.length }) 
+              : t('ui.view_3d_short_with_progress', { filled: filledCount, total: blueprintSlots.length })}
           </span>
         </button>
         
@@ -143,8 +149,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
             onClick={onStartExplore}
             className="px-3 py-2 md:px-4 md:py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg text-sm md:text-base"
           >
-            <span className="hidden sm:inline">Explore Shapes</span>
-            <span className="sm:hidden">Explore</span>
+            <span className="hidden sm:inline">{t('ui.explore_shapes')}</span>
+            <span className="sm:hidden">{t('ui.explore')}</span>
           </button>
         )}
       </div>
@@ -161,10 +167,10 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
             <div className="absolute top-1 left-1 md:top-2 md:left-2 lg:top-4 lg:left-4 px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-xs md:text-sm tracking-wider">
                 <span className="hidden sm:inline">
-                  {isExploreMode ? '3D EXPLORE VIEW' : '3D CASTLE VIEW'}
+                  {isExploreMode ? t('ui.view_label_3d_explore') : t('ui.view_label_3d_castle')}
                 </span>
                 <span className="sm:hidden">
-                  {isExploreMode ? '3D EXPLORE' : '3D CASTLE'}
+                  {isExploreMode ? t('ui.view_label_3d_explore_short') : t('ui.view_label_3d_castle_short')}
                 </span>
               </span>
             </div>
@@ -199,10 +205,10 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
             <div className="absolute top-1 left-1 md:top-2 md:left-2 lg:top-4 lg:left-4 px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
               <span className="text-cyan-300 font-mono text-xs md:text-sm tracking-wider">
                 <span className="hidden sm:inline">
-                  {isExploreMode ? 'EXPLORE MODE - DROP SHAPES ANYWHERE' : 'CASTLE CONSTRUCTION BLUEPRINT'}
+                  {isExploreMode ? t('ui.explore_mode_drop_anywhere') : t('ui.castle_blueprint')}
                 </span>
                 <span className="sm:hidden">
-                  {isExploreMode ? 'EXPLORE MODE' : 'BLUEPRINT'}
+                  {isExploreMode ? t('ui.explore_mode_short') : t('ui.blueprint_short')}
                 </span>
               </span>
             </div>

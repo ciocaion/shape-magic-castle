@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DraggableShape } from './DraggableShape';
 import type { ShapeType } from './ShapeShifterCastle';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,6 +11,7 @@ interface ShapePaletteProps {
 export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) => {
   const shapes: ShapeType[] = ['square', 'rectangle', 'triangle', 'circle', 'pentagon'];
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   return (
     <div className={`bg-card rounded-gradeaid p-3 md:p-4 lg:p-6 shadow-gradeaid border-l-[6px] md:border-l-[8px] lg:border-l-[10px] border-b-[6px] md:border-b-[8px] lg:border-b-[10px] border-foreground ${className}`}>
@@ -17,8 +19,8 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) =>
       <div className="text-center mb-2 md:mb-3 lg:mb-4">
         <div className="inline-block px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-primary/10 rounded-gradeaid-button border border-primary/20">
           <span className="text-primary-foreground font-semibold text-xs md:text-sm tracking-wider">
-            <span className="hidden sm:inline">CONSTRUCTION TOOLS</span>
-            <span className="sm:hidden">TOOLS</span>
+            <span className="hidden sm:inline">{t('ui.construction_tools')}</span>
+            <span className="sm:hidden">{t('ui.tools_short')}</span>
           </span>
         </div>
       </div>
