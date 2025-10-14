@@ -56,10 +56,6 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({
                 }`}
                 size={isMobile ? "small" : "medium"}
               />
-              {/* Tool readiness indicator - responsive sizing */}
-              <div className={`absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 w-2 h-2 md:w-3 md:h-3 rounded-full animate-gentle-float opacity-70 ${
-                isActive ? 'bg-cyan-400 animate-pulse' : 'bg-success'
-              }`} />
             </div>
           );
         })}
