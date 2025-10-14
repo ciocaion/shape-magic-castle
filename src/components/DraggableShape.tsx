@@ -47,10 +47,12 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   };
 
   const renderShape = () => {
+    const isSVGShape = ['triangle', 'circle', 'pentagon', 'hexagon'].includes(type);
+    
     const baseClasses = `${sizeClasses[size]} cursor-pointer select-none relative
       ${isDragging ? 'opacity-50' : 'opacity-100'} 
       ${is3D ? 'animate-transform-to-3d' : ''} 
-      transition-all duration-300 hover:shadow-gentle`;
+      transition-all duration-300 ${!isSVGShape ? 'hover:shadow-gentle' : ''}`;
 
     switch (type) {
       case 'square':
@@ -77,9 +79,9 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 86.6"
             className={baseClasses}
             aria-label="Triangle shape"
-            style={{ background: 'transparent' }}
+            style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,0 100,86.6 0,86.6" fill="hsl(var(--shape-triangle))" />
+            <polygon points="50,0 100,86.6 0,86.6" fill="hsl(var(--shape-triangle))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'circle':
@@ -88,9 +90,9 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Circle shape"
-            style={{ background: 'transparent' }}
+            style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <circle cx="50" cy="50" r="50" fill="hsl(var(--shape-circle))" />
+            <circle cx="50" cy="50" r="50" fill="hsl(var(--shape-circle))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'pentagon':
@@ -99,9 +101,9 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Pentagon shape"
-            style={{ background: 'transparent' }}
+            style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,5 95,38 77,90 23,90 5,38" fill="hsl(var(--shape-star))" />
+            <polygon points="50,5 95,38 77,90 23,90 5,38" fill="hsl(var(--shape-star))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'hexagon':
@@ -110,9 +112,9 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Hexagon shape"
-            style={{ background: 'transparent' }}
+            style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="hsl(var(--shape-heart))" />
+            <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="hsl(var(--shape-heart))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       
