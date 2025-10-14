@@ -5,9 +5,6 @@ import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
-import { BlueprintSelector } from './BlueprintSelector';
-import type { BlueprintType as SelectorBlueprintType } from './BlueprintSelector';
-import { blueprints } from './blueprintDefinitions';
 import { tutorService } from '../services/tutorService';
 
 export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'pentagon' | 'hexagon';
@@ -36,15 +33,26 @@ export interface GameState {
   };
 }
 
-// Initial blueprint is castle
-const initialBlueprint = blueprints.castle;
+// Compact castle blueprint sequence - proper castle formation with triangles directly on top of rectangles
+const blueprintSequence = [
+  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
+  { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
+  { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
+  { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
+  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 302 }, size: 'medium' as const },
+  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 302 }, size: 'medium' as const },
+  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 272 }, size: 'medium' as const },
+  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 150 }, size: 'medium' as const },
+  { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
+  { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 318 }, size: 'medium' as const },
+];
 
 export const ShapeShifterCastle: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const [blueprintSequence, setBlueprintSequence] = useState(initialBlueprint);
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
   const [currentStep, setCurrentStep] = useState(0);
-  const [showBlueprintSelector, setShowBlueprintSelector] = useState(false);
+  const [isExploreMode, setIsExploreMode] = useState(false);
+  const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
   const [hasShownIntro, setHasShownIntro] = useState(false);
 
   const isCompleted = currentStep >= blueprintSequence.length;
@@ -65,7 +73,7 @@ export const ShapeShifterCastle: React.FC = () => {
     isCompleted, 
     currentStep, 
     totalSteps: blueprintSequence.length,
-    showBlueprintSelector 
+    isExploreMode 
   });
 
   // Get tutor message key based on step and slot
@@ -96,6 +104,8 @@ export const ShapeShifterCastle: React.FC = () => {
   };
 
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
+    if (isExploreMode) return;
+    
     const expected = blueprintSequence[currentStep];
     if (slotId === expected.id && shapeType === expected.type) {
       setFilledSlots(prev => ({ ...prev, [slotId]: true }));
@@ -118,39 +128,65 @@ export const ShapeShifterCastle: React.FC = () => {
       if (newStep >= blueprintSequence.length) {
         setTimeout(() => {
           tutorService.sendSuccessMessage(t, 'tutor.blueprint_complete');
-          // Show blueprint selector after a brief delay
-          setTimeout(() => {
-            setShowBlueprintSelector(true);
-          }, 2000);
         }, 1000);
       }
     }
   };
 
-  const handleBlueprintSelect = (blueprintType: SelectorBlueprintType) => {
-    // Reset game state for new blueprint
-    setFilledSlots({});
-    setCurrentStep(0);
-    setShowBlueprintSelector(false);
-    
-    // Load the selected blueprint
-    const selectedBlueprint = blueprints[blueprintType];
-    setBlueprintSequence(selectedBlueprint);
-    
-    // Send tutor message
+  const handleExploreShapePlaced = (position: { x: number; y: number }, shapeType: ShapeType) => {
+    const newShape: CastleSlot = {
+      id: `explore-${Date.now()}-${Math.random()}`,
+      type: shapeType,
+      position,
+      size: 'medium',
+      filled: true,
+      active: false,
+      locked: false,
+      showSymmetry: false,
+      isExploreMode: true,
+      rotation: 0,
+    };
+    setExploreShapes(prev => [...prev, newShape]);
+  };
+
+  const handleExploreShapeRemoved = (shapeId: string) => {
+    setExploreShapes(prev => prev.filter(shape => shape.id !== shapeId));
+  };
+
+  const handleExploreShapeMoved = (shapeId: string, newPosition: { x: number; y: number }) => {
+    setExploreShapes(prev => prev.map(shape => 
+      shape.id === shapeId 
+        ? { ...shape, position: newPosition }
+        : shape
+    ));
+  };
+
+  const handleExploreShapeRotated = (shapeId: string) => {
+    setExploreShapes(prev => prev.map(shape => 
+      shape.id === shapeId 
+        ? { ...shape, rotation: (shape.rotation || 0) + 45 }
+        : shape
+    ));
+  };
+
+  const handleStartExplore = () => {
+    setIsExploreMode(true);
     setTimeout(() => {
-      tutorService.sendInstructionMessage(t, `tutor.start_${blueprintType}`);
+      tutorService.sendInstructionMessage(t, 'tutor.explore_mode');
     }, 500);
   };
 
   // Prepare slots for rendering
-  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
-    ...slot,
-    filled: !!filledSlots[slot.id],
-    active: idx === currentStep,
-    locked: idx < currentStep,
-    showSymmetry: false,
-  }));
+  const slots: CastleSlot[] = [
+    ...blueprintSequence.map((slot, idx) => ({
+      ...slot,
+      filled: !!filledSlots[slot.id],
+      active: idx === currentStep && !isExploreMode,
+      locked: idx < currentStep,
+      showSymmetry: false,
+    })),
+    ...exploreShapes,
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
@@ -185,25 +221,29 @@ export const ShapeShifterCastle: React.FC = () => {
         <div className="absolute bottom-16 right-2 md:bottom-20 md:right-4 lg:bottom-24 lg:right-8 w-2 h-2 border border-cyan-400 rotate-45" />
       </div>
 
-      {/* Progress Bar - responsive spacing */}
-      <ProgressBar
-        completed={currentStep}
-        total={blueprintSequence.length}
-        className="mx-2 mt-2 mb-1 md:mx-4 md:mt-4 md:mb-2 lg:mx-6 lg:mt-6 lg:mb-4"
-      />
+      {/* Progress Bar - only show in blueprint mode - responsive spacing */}
+      {!isExploreMode && (
+        <ProgressBar
+          completed={currentStep}
+          total={blueprintSequence.length}
+          className="mx-2 mt-2 mb-1 md:mx-4 md:mt-4 md:mb-2 lg:mx-6 lg:mt-6 lg:mb-4"
+        />
+      )}
 
       {/* Main Game Area - responsive padding */}
       <div className="flex-1 flex flex-col px-2 md:px-4 lg:px-6">
         <CastleInterface
           slots={slots}
           onShapePlaced={handleShapePlaced}
+          onExploreShapePlaced={handleExploreShapePlaced}
+          onExploreShapeRemoved={handleExploreShapeRemoved}
+          onExploreShapeMoved={handleExploreShapeMoved}
+          onExploreShapeRotated={handleExploreShapeRotated}
+          isExploreMode={isExploreMode}
+          isCompleted={isCompleted}
+          onStartExplore={handleStartExplore}
         />
       </div>
-
-      {/* Blueprint Selector Modal */}
-      {showBlueprintSelector && (
-        <BlueprintSelector onSelect={handleBlueprintSelect} />
-      )}
 
       {/* Shape Palette - responsive positioning and spacing */}
       <ShapePalette className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6" />
