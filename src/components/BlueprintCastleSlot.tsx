@@ -211,12 +211,13 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
     hexagon: t('ui.add_shape.hexagon'),
   };
 
-  const sizeMap = {
-    large: { width: 80, height: 80 },
-    medium: { width: 32, height: 96 },
-    small: { width: 20, height: 32 },
-  };
-  const slotSize = sizeMap[slot.size || 'medium'];
+  const slotSize = (() => {
+    const s = slot.size || 'medium';
+    const isRect = slot.type === 'rectangle';
+    if (s === 'small') return isRect ? { width: 16, height: 64 } : { width: 32, height: 32 };
+    if (s === 'medium') return isRect ? { width: 32, height: 96 } : { width: 48, height: 48 };
+    return { width: 80, height: 80 };
+  })();
 
   if (slot.filled || slot.locked) {
     return (
@@ -260,21 +261,54 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div
-        className={`border-4 flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
-          ${showError ? 'border-red-400 bg-red-200/20 animate-subtle-shake' : isDragOver ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'border-cyan-300/80 bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
-        `}
-        style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
-      >
-        <div className="opacity-30">
-          <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
-        </div>
-        {slot.active && (
-          <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
-            {promptMap[slot.type]}
+      {slot.type === 'triangle' ? (
+        
+        		<div
+          className={`relative flex items-center justify-center transition-all duration-300 min-w-0 min-h-0
+            ${showError ? 'bg-red-200/20 animate-subtle-shake' : isDragOver ? 'bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
+          `}
+          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
+        >
+          {/* Triangle outline placeholder (no rectangular border) */}
+          <svg
+            className="absolute inset-0 pointer-events-none"
+            viewBox="0 0 100 86.6"
+            preserveAspectRatio="none"
+          >
+            <polygon
+              points="50,0 100,86.6 0,86.6"
+              fill={isDragOver ? 'rgba(34,211,238,0.2)' : 'transparent'}
+              stroke="#22d3ee"
+              strokeWidth="4"
+            />
+          </svg>
+          <div className="opacity-30">
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
           </div>
-        )}
-      </div>
+          {slot.active && (
+            <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
+              {promptMap[slot.type]}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className={`border-4 flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
+            ${showError ? 'border-red-400 bg-red-200/20 animate-subtle-shake' : isDragOver ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'border-cyan-300/80 bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
+          `}
+          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
+        >
+          <div className="opacity-30">
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+          </div>
+          {slot.active && (
+            <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
+              {promptMap[slot.type]}
+            </div>
+          )}
+        </div>
+      )}
+
     </div>
   );
 };
