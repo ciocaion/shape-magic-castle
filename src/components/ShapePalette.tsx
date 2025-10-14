@@ -48,7 +48,6 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({
                 isActive ? 'cursor-pointer' : ''
               }`}
               onClick={() => handleShapeClick(shape)}
-              title={isActive ? t('ui.click_to_add') : ''}
             >
               <DraggableShape
                 type={shape}
