@@ -283,7 +283,6 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
           maxDistance={20}
           minDistance={5}
           maxPolarAngle={Math.PI / 2}
-          touchAction="pan-y"
         />
       </Canvas>
     </div>

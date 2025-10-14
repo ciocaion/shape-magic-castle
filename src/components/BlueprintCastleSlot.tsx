@@ -261,7 +261,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
       onDrop={handleDrop}
     >
       <div
-        className={`border-4 rounded-lg flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
+        className={`border-4 flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
           ${showError ? 'border-red-400 bg-red-200/20 animate-subtle-shake' : isDragOver ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'border-cyan-300/80 bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
         `}
         style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
@@ -270,7 +270,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
         </div>
         {slot.active && (
-          <div className="absolute left-1/2 top-[-2.5rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
+          <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
             {promptMap[slot.type]}
           </div>
         )}
