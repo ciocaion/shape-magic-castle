@@ -133,6 +133,15 @@ export const ShapeShifterCastle: React.FC = () => {
     }
   };
 
+  const handleShapeClick = (shapeType: ShapeType) => {
+    if (isExploreMode) return;
+    
+    const expected = blueprintSequence[currentStep];
+    if (shapeType === expected.type) {
+      handleShapePlaced(expected.id, shapeType);
+    }
+  };
+
   const handleExploreShapePlaced = (position: { x: number; y: number }, shapeType: ShapeType) => {
     const newShape: CastleSlot = {
       id: `explore-${Date.now()}-${Math.random()}`,
@@ -246,7 +255,11 @@ export const ShapeShifterCastle: React.FC = () => {
       </div>
 
       {/* Shape Palette - responsive positioning and spacing */}
-      <ShapePalette className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6" />
+      <ShapePalette 
+        className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6"
+        activeShapeType={!isExploreMode && currentStep < blueprintSequence.length ? blueprintSequence[currentStep].type : null}
+        onShapeClick={handleShapeClick}
+      />
     </div>
   );
 };

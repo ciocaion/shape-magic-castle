@@ -6,12 +6,24 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ShapePaletteProps {
   className?: string;
+  activeShapeType?: ShapeType | null;
+  onShapeClick?: (shapeType: ShapeType) => void;
 }
 
-export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) => {
+export const ShapePalette: React.FC<ShapePaletteProps> = ({ 
+  className = '', 
+  activeShapeType = null,
+  onShapeClick
+}) => {
   const shapes: ShapeType[] = ['square', 'rectangle', 'triangle', 'circle', 'pentagon'];
   const isMobile = useIsMobile();
   const { t } = useTranslation();
+
+  const handleShapeClick = (shapeType: ShapeType) => {
+    if (onShapeClick && activeShapeType === shapeType) {
+      onShapeClick(shapeType);
+    }
+  };
 
   return (
     <div className={`bg-card rounded-gradeaid p-3 md:p-4 lg:p-6 shadow-gradeaid border-l-[6px] md:border-l-[8px] lg:border-l-[10px] border-b-[6px] md:border-b-[8px] lg:border-b-[10px] border-foreground ${className}`}>
@@ -27,20 +39,31 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({ className = '' }) =>
       
       {/* Shape Tools with Responsive Display */}
       <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 flex-wrap">
-        {shapes.map((shape) => (
-          <div 
-            key={shape} 
-            className="relative group w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10"
-          >
-            <DraggableShape
-              type={shape}
-              className="transform hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-primary/50 rounded-2xl touch-manipulation"
-              size={isMobile ? "small" : "medium"}
-            />
-            {/* Tool readiness indicator - responsive sizing */}
-            <div className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 w-2 h-2 md:w-3 md:h-3 bg-success rounded-full animate-gentle-float opacity-70" />
-          </div>
-        ))}
+        {shapes.map((shape) => {
+          const isActive = activeShapeType === shape;
+          return (
+            <div 
+              key={shape} 
+              className={`relative group w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${
+                isActive ? 'cursor-pointer' : ''
+              }`}
+              onClick={() => handleShapeClick(shape)}
+              title={isActive ? t('ui.click_to_add') : ''}
+            >
+              <DraggableShape
+                type={shape}
+                className={`transform hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-primary/50 rounded-2xl touch-manipulation ${
+                  isActive ? 'ring-2 ring-cyan-400 animate-gentle-pulse' : ''
+                }`}
+                size={isMobile ? "small" : "medium"}
+              />
+              {/* Tool readiness indicator - responsive sizing */}
+              <div className={`absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 w-2 h-2 md:w-3 md:h-3 rounded-full animate-gentle-float opacity-70 ${
+                isActive ? 'bg-cyan-400 animate-pulse' : 'bg-success'
+              }`} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
