@@ -77,6 +77,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 86.6"
             className={baseClasses}
             aria-label="Triangle shape"
+            style={{ background: 'transparent' }}
           >
             <polygon points="50,0 100,86.6 0,86.6" fill="hsl(var(--shape-triangle))" />
           </svg>
@@ -87,6 +88,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Circle shape"
+            style={{ background: 'transparent' }}
           >
             <circle cx="50" cy="50" r="50" fill="hsl(var(--shape-circle))" />
           </svg>
@@ -97,6 +99,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Pentagon shape"
+            style={{ background: 'transparent' }}
           >
             <polygon points="50,5 95,38 77,90 23,90 5,38" fill="hsl(var(--shape-star))" />
           </svg>
@@ -107,6 +110,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             viewBox="0 0 100 100"
             className={baseClasses}
             aria-label="Hexagon shape"
+            style={{ background: 'transparent' }}
           >
             <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="hsl(var(--shape-heart))" />
           </svg>
