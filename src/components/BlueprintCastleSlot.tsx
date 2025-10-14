@@ -291,6 +291,37 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             </div>
           )}
         </div>
+      ) : slot.type === 'circle' ? (
+        <div
+          className={`relative flex items-center justify-center transition-all duration-300 min-w-0 min-h-0
+            ${showError ? 'bg-red-200/20 animate-subtle-shake' : isDragOver ? 'bg-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.4)] animate-blueprint-pulse' : 'bg-transparent shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-blueprint-pulse'}
+          `}
+          style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
+        >
+          {/* Circle outline placeholder (no rectangular border) */}
+          <svg
+            className="absolute inset-0 pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="48"
+              fill={isDragOver ? 'rgba(34,211,238,0.2)' : 'transparent'}
+              stroke="#22d3ee"
+              strokeWidth="4"
+            />
+          </svg>
+          <div className="opacity-30">
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+          </div>
+          {slot.active && (
+            <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
+              {promptMap[slot.type]}
+            </div>
+          )}
+        </div>
       ) : (
         <div
           className={`border-4 flex items-center justify-center relative transition-all duration-300 min-w-0 min-h-0
