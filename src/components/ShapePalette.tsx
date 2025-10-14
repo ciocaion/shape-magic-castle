@@ -44,16 +44,12 @@ export const ShapePalette: React.FC<ShapePaletteProps> = ({
           return (
             <div 
               key={shape} 
-              className={`relative group w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 ${
-                isActive ? 'cursor-pointer' : ''
-              }`}
+              className="relative group w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 cursor-pointer"
               onClick={() => handleShapeClick(shape)}
             >
               <DraggableShape
                 type={shape}
-                className={`transform hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-primary/50 rounded-2xl touch-manipulation ${
-                  isActive ? 'ring-2 ring-cyan-400 animate-gentle-pulse' : ''
-                }`}
+                className="transform hover:scale-110 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-primary/50 rounded-2xl touch-manipulation"
                 size={isMobile ? "small" : "medium"}
               />
             </div>
