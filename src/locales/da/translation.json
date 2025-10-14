@@ -9,7 +9,11 @@
     "rectangle_trunk": "Lad os plante et træ!\nVi starter med et 🔷 rektangel til stammen 🌳\n➡️ Placer 🔷 rektanglet ved siden af dit slot.",
     "pentagon_leaves": "Dette er en 🟡 femkant—den har 5 sider!\nVi bruger den som den bladrige del af træet 🍃\n➡️ Placer 🟡 femkanten oven på 🔷 stammen. Træ færdigt!",
     "blueprint_complete": "🎉 Fantastisk! Dit slot er færdigt!\n🕹️ Skift til 3D Visning for at se det i fuld pragt!\nBrug din mus til at rotere, zoome og udforske!",
-    "explore_mode": "Nu er det din tur til at være chefen!\nI Udforsk Tilstand kan du slippe former hvor som helst!\n💡 Prøv at stable, rotere eller lave dit eget skøre slot!\n🎠 Træhus? Robottårn? Gå løs!",
+    "start_airplane": "Lad os bygge et ✈️ fly! Klar til start?",
+    "start_minecraft": "Tid til at bygge en ⛏️ Minecraft-figur! Lad os lave det!",
+    "start_roblox": "Lad os skabe en 🎮 Roblox-figur! Lad os spille!",
+    "start_unicorn": "Lad os lave en magisk 🦄 enhjørning! Glitrende tid!",
+    "start_house": "Lad os bygge et hyggeligt 🏠 hus! Hjem søde hjem!",
     "encouragements": {
       "nice_match": "Flot formtilpasning! ✅",
       "triangle_fits": "Den 🔺 trekant passer som en handske! 💯",
@@ -78,5 +82,14 @@
       "pentagon": "Tilføj femkant",
       "hexagon": "Tilføj sekskant"
     }
+  },
+  "blueprint_selector": {
+    "title": "🎉 Slot Færdigt! Hvad Nu?",
+    "subtitle": "Vælg hvad du vil bygge næste gang!",
+    "airplane": "Fly",
+    "minecraft": "Minecraft",
+    "roblox": "Roblox",
+    "unicorn": "Enhjørning",
+    "house": "Hus"
   }
 }

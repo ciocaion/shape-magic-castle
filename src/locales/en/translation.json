@@ -9,7 +9,11 @@
     "rectangle_trunk": "Let's plant a tree!\nWe'll start with a 🔷 rectangle for the trunk 🌳\n➡️ Place the 🔷 rectangle on the side of your castle.",
     "pentagon_leaves": "This is a 🟡 pentagon—it has 5 sides!\nWe'll use it as the leafy part of the tree 🍃\n➡️ Place the 🟡 pentagon on top of the 🔷 rectangle. Tree complete!",
     "blueprint_complete": "🎉 Amazing! Your castle is finished!\n🕹️ Switch to 3D View to see it in full glory!\nUse your mouse to rotate, zoom, and explore!",
-    "explore_mode": "Now it's your turn to be the boss!\nIn Explore Mode, you can drop shapes anywhere!\n💡 Try stacking, rotating, or making your own wacky castle!\n🎠 Treehouse? Robot tower? Go wild!",
+    "start_airplane": "Let's build an ✈️ airplane! Ready for takeoff?",
+    "start_minecraft": "Time to build a ⛏️ Minecraft character! Let's craft it!",
+    "start_roblox": "Let's create a 🎮 Roblox character! Game on!",
+    "start_unicorn": "Let's make a magical 🦄 unicorn! Sparkle time!",
+    "start_house": "Let's build a cozy 🏠 house! Home sweet home!",
     "encouragements": {
       "nice_match": "Nice shape match! ✅",
       "triangle_fits": "That 🔺 triangle fits like a glove! 💯",
@@ -78,5 +82,14 @@
       "pentagon": "Add Pentagon",
       "hexagon": "Add Hexagon"
     }
+  },
+  "blueprint_selector": {
+    "title": "🎉 Castle Complete! What's Next?",
+    "subtitle": "Choose what you want to build next!",
+    "airplane": "Airplane",
+    "minecraft": "Minecraft",
+    "roblox": "Roblox",
+    "unicorn": "Unicorn",
+    "house": "House"
   }
 }
