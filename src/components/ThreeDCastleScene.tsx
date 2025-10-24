@@ -50,7 +50,8 @@ const Shape3D: React.FC<{
     const position: [number, number, number] = [x3d, y3d, 0];
     
     // Apply rotation from explore mode - convert degrees to radians and apply to Z-axis
-    const rotationZ = (slot.rotation || 0) * (Math.PI / 180);
+    // Negate rotation to account for Y-axis flip (2D screen coords vs 3D world coords)
+    const rotationZ = -(slot.rotation || 0) * (Math.PI / 180);
     
     return (
       <mesh 
