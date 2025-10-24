@@ -121,8 +121,7 @@ export const ShapeShifterCastle: React.FC = () => {
         setTimeout(() => {
           const blueprintName = t(`blueprints.${currentBlueprint}.title`);
           tutorService.sendSuccessMessage(t, 'tutor.blueprint_complete', { blueprintName });
-          // Show blueprint selector for next project
-          setShowBlueprintSelector(true);
+          // Don't show selector immediately - let them view 3D first
         }, 1000);
       }
     }
@@ -142,6 +141,11 @@ export const ShapeShifterCastle: React.FC = () => {
     setFilledSlots({});
     setCurrentStep(0);
     setShowBlueprintSelector(false);
+  };
+
+  const handleExploreClick = () => {
+    // When they click Explore Shapes after completion, show blueprint selector
+    setShowBlueprintSelector(true);
   };
 
   // Prepare slots for rendering
@@ -209,7 +213,7 @@ export const ShapeShifterCastle: React.FC = () => {
             onExploreShapeRotated={() => {}}
             isExploreMode={false}
             isCompleted={isCompleted}
-            onStartExplore={() => setShowBlueprintSelector(true)}
+            onStartExplore={handleExploreClick}
           />
         )}
       </div>
