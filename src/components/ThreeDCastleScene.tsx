@@ -42,9 +42,9 @@ const Shape3D: React.FC<{
   const blueprintWidth = 800;
   const blueprintHeight = 600;
   
-  // For explore mode shapes, use larger scale factor to prevent 3D overlap
+  // For explore mode shapes, map pixels to world units 1:1 so 3D matches 2D adjacency
   if (slot.isExploreMode) {
-    const scaleFactor = 0.02; // Increased spacing to accommodate 3D shape volumes
+    const scaleFactor = 0.01; // 1px -> 0.01 world units for faithful layout
     const x3d = (slot.position.x - blueprintWidth / 2) * scaleFactor;
     const y3d = -(slot.position.y - blueprintHeight / 2) * scaleFactor;
     const position: [number, number, number] = [x3d, y3d, 0];
@@ -106,98 +106,206 @@ const Shape3D: React.FC<{
 
 // Extract shape geometry logic into a separate function
 const getShape3DGeometry = (slot: CastleSlotType) => {
-  // Much smaller shapes in explore mode to prevent overlap with increased spacing
-  const exploreModeScale = slot.isExploreMode ? 0.25 : 1;
-  const sizeMultiplier = (slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1) * exploreModeScale;
-  
+  const isExplore = slot.isExploreMode;
+
+  // When in explore mode, match the 2D pixel sizes to world units so shapes butt together
+  const pxToWorld = 0.01; // 1px = 0.01 world units
+  const size = slot.size ?? 'medium';
+
+  const getDimsPx = () => {
+    if (slot.type === 'rectangle') {
+      if (size === 'small') return { w: 16, h: 64 };
+      // Default rectangle used in explore mode (vertical by default, rotation applied later)
+      return { w: 32, h: 96 };
+    }
+    const side = size === 'small' ? 32 : size === 'large' ? 80 : 48;
+    return { w: side, h: side };
+  };
+
+  const dimsPx = getDimsPx();
+  const wWorld = dimsPx.w * pxToWorld;
+  const hWorld = dimsPx.h * pxToWorld;
+  const exploreDepth = 0.24; // thin depth to reduce occlusion
+
+  // Non-explore sizing (existing 3D castle look)
+  const nonExploreSizeMultiplier = slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1;
+
   switch (slot.type) {
     case 'triangle':
+      if (isExplore) {
+        return (
+          <>
+            <coneGeometry args={[wWorld / 2, hWorld, 3]} />
+            <meshStandardMaterial color="#10b981" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.ConeGeometry(wWorld / 2, hWorld, 3)]} />
+                <lineBasicMaterial color="#06d6a0" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
-          <coneGeometry args={[0.8 * sizeMultiplier, 1.2 * sizeMultiplier, 3]} />
+          <coneGeometry args={[0.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 3]} />
           <meshStandardMaterial color="#10b981" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.ConeGeometry(0.8 * sizeMultiplier, 1.2 * sizeMultiplier, 3)]} />
+              <edgesGeometry args={[new THREE.ConeGeometry(0.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 3)]} />
               <lineBasicMaterial color="#06d6a0" />
             </lineSegments>
           )}
         </>
       );
+
     case 'circle':
+      if (isExplore) {
+        return (
+          <>
+            <sphereGeometry args={[wWorld / 2, 32, 32]} />
+            <meshStandardMaterial color="#fbbf24" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.SphereGeometry(wWorld / 2, 16, 16)]} />
+                <lineBasicMaterial color="#fde047" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
-          <sphereGeometry args={[0.6 * sizeMultiplier, 32, 32]} />
+          <sphereGeometry args={[0.6 * nonExploreSizeMultiplier, 32, 32]} />
           <meshStandardMaterial color="#fbbf24" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.SphereGeometry(0.6 * sizeMultiplier, 16, 16)]} />
+              <edgesGeometry args={[new THREE.SphereGeometry(0.6 * nonExploreSizeMultiplier, 16, 16)]} />
               <lineBasicMaterial color="#fde047" />
             </lineSegments>
           )}
         </>
       );
+
     case 'square':
+      if (isExplore) {
+        return (
+          <>
+            <boxGeometry args={[wWorld, hWorld, exploreDepth]} />
+            <meshStandardMaterial color="#ef4444" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.BoxGeometry(wWorld, hWorld, exploreDepth)]} />
+                <lineBasicMaterial color="#f87171" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
-          <boxGeometry args={[1.2 * sizeMultiplier, 1.2 * sizeMultiplier, 1.2 * sizeMultiplier]} />
+          <boxGeometry args={[1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
           <meshStandardMaterial color="#ef4444" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.BoxGeometry(1.2 * sizeMultiplier, 1.2 * sizeMultiplier, 1.2 * sizeMultiplier)]} />
+              <edgesGeometry args={[new THREE.BoxGeometry(1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)]} />
               <lineBasicMaterial color="#f87171" />
             </lineSegments>
           )}
         </>
       );
+
     case 'pentagon':
+      if (isExplore) {
+        return (
+          <>
+            <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 5]} />
+            <meshStandardMaterial color="#22c55e" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.CylinderGeometry(wWorld / 2, wWorld / 2, hWorld, 5)]} />
+                <lineBasicMaterial color="#4ade80" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
-          <cylinderGeometry args={[0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 5]} />
+          <cylinderGeometry args={[0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 5]} />
           <meshStandardMaterial color="#22c55e" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 5)]} />
+              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 5)]} />
               <lineBasicMaterial color="#4ade80" />
             </lineSegments>
           )}
         </>
       );
+
     case 'hexagon':
+      if (isExplore) {
+        return (
+          <>
+            <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 6]} />
+            <meshStandardMaterial color="#ec4899" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.CylinderGeometry(wWorld / 2, wWorld / 2, hWorld, 6)]} />
+                <lineBasicMaterial color="#f472b6" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
-          <cylinderGeometry args={[0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 6]} />
+          <cylinderGeometry args={[0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 6]} />
           <meshStandardMaterial color="#ec4899" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * sizeMultiplier, 0.6 * sizeMultiplier, 1.2 * sizeMultiplier, 6)]} />
+              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 6)]} />
               <lineBasicMaterial color="#f472b6" />
             </lineSegments>
           )}
         </>
       );
+
     case 'rectangle':
+      if (isExplore) {
+        return (
+          <>
+            <boxGeometry args={[wWorld, hWorld, exploreDepth]} />
+            <meshStandardMaterial color="#8b5cf6" />
+            {slot.showSymmetry && (
+              <lineSegments>
+                <edgesGeometry args={[new THREE.BoxGeometry(wWorld, hWorld, exploreDepth)]} />
+                <lineBasicMaterial color="#a78bfa" />
+              </lineSegments>
+            )}
+          </>
+        );
+      }
       return (
         <>
           {slot.size === 'small' ? (
-            // Thin and tall for tree trunk
-            <boxGeometry args={[0.4 * sizeMultiplier, 1.8 * sizeMultiplier, 1.2 * sizeMultiplier]} />
+            <boxGeometry args={[0.4 * nonExploreSizeMultiplier, 1.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
           ) : (
-            // Tall rectangles for towers - with proper spacing
-            <boxGeometry args={[1.0 * sizeMultiplier, 2.8 * sizeMultiplier, 1.2 * sizeMultiplier]} />
+            <boxGeometry args={[1.0 * nonExploreSizeMultiplier, 2.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
           )}
           <meshStandardMaterial color="#8b5cf6" />
           {slot.showSymmetry && (
             <lineSegments>
-              <edgesGeometry args={slot.size === 'small' ? 
-                [new THREE.BoxGeometry(0.4 * sizeMultiplier, 1.8 * sizeMultiplier, 1.2 * sizeMultiplier)] :
-                [new THREE.BoxGeometry(1.0 * sizeMultiplier, 2.8 * sizeMultiplier, 1.2 * sizeMultiplier)]
+              <edgesGeometry args={slot.size === 'small' ?
+                [new THREE.BoxGeometry(0.4 * nonExploreSizeMultiplier, 1.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)] :
+                [new THREE.BoxGeometry(1.0 * nonExploreSizeMultiplier, 2.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)]
               } />
               <lineBasicMaterial color="#a78bfa" />
             </lineSegments>
           )}
         </>
       );
+
     default:
       return null;
   }
