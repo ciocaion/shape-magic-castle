@@ -108,8 +108,10 @@ const Shape3D: React.FC<{
 const getShape3DGeometry = (slot: CastleSlotType) => {
   const isExplore = slot.isExploreMode;
 
-  // When in explore mode, match the 2D pixel sizes to world units so shapes butt together
-  const pxToWorld = 0.01; // 1px = 0.01 world units
+  // When in explore mode, scale down shapes significantly to prevent 3D overlap
+  // while maintaining relative proportions and position mapping
+  const pxToWorld = 0.01; // 1px = 0.01 world units for positioning
+  const sizeReduction = 0.3; // Reduce 3D shape size to 30% to prevent overlap
   const size = slot.size ?? 'medium';
 
   const getDimsPx = () => {
@@ -123,9 +125,9 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   };
 
   const dimsPx = getDimsPx();
-  const wWorld = dimsPx.w * pxToWorld;
-  const hWorld = dimsPx.h * pxToWorld;
-  const exploreDepth = 0.24; // thin depth to reduce occlusion
+  const wWorld = dimsPx.w * pxToWorld * sizeReduction;
+  const hWorld = dimsPx.h * pxToWorld * sizeReduction;
+  const exploreDepth = 0.15; // thin depth to reduce occlusion
 
   // Non-explore sizing (existing 3D castle look)
   const nonExploreSizeMultiplier = slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1;
