@@ -42,9 +42,9 @@ const Shape3D: React.FC<{
   const blueprintWidth = 800;
   const blueprintHeight = 600;
   
-  // For explore mode shapes, use direct position mapping that matches 2D layout
+  // For explore mode shapes, use larger scale factor to prevent 3D overlap
   if (slot.isExploreMode) {
-    const scaleFactor = 0.01; // Keep same scale as 2D to maintain relative positioning
+    const scaleFactor = 0.02; // Increased spacing to accommodate 3D shape volumes
     const x3d = (slot.position.x - blueprintWidth / 2) * scaleFactor;
     const y3d = -(slot.position.y - blueprintHeight / 2) * scaleFactor;
     const position: [number, number, number] = [x3d, y3d, 0];
@@ -106,8 +106,8 @@ const Shape3D: React.FC<{
 
 // Extract shape geometry logic into a separate function
 const getShape3DGeometry = (slot: CastleSlotType) => {
-  // Significantly reduce size for explore mode shapes to prevent overlap
-  const exploreModeScale = slot.isExploreMode ? 0.4 : 1;
+  // Much smaller shapes in explore mode to prevent overlap with increased spacing
+  const exploreModeScale = slot.isExploreMode ? 0.25 : 1;
   const sizeMultiplier = (slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1) * exploreModeScale;
   
   switch (slot.type) {
