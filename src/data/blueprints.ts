@@ -40,9 +40,6 @@ export const airplaneBlueprint: BlueprintSlot[] = [
   // Windows
   { id: 'window-1', type: 'circle', position: { x: 380, y: 290 }, size: 'small' },
   { id: 'window-2', type: 'circle', position: { x: 420, y: 290 }, size: 'small' },
-  
-  // Propeller
-  { id: 'propeller', type: 'hexagon', position: { x: 400, y: 380 }, size: 'small' },
 ];
 
 // House blueprint
