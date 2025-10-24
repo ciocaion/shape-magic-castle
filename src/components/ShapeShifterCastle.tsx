@@ -5,7 +5,10 @@ import { ShapePalette } from './ShapePalette';
 import { CastleInterface } from './CastleInterface';
 import { ComparisonTask } from './ComparisonTask';
 import { ProgressBar } from './ProgressBar';
+import { BlueprintSelector } from './BlueprintSelector';
 import { tutorService } from '../services/tutorService';
+import { blueprints, type BlueprintType } from '../data/blueprints';
+import type { BlueprintType as BlueprintSelectorType } from './BlueprintSelector';
 
 export type ShapeType = 'square' | 'rectangle' | 'triangle' | 'circle' | 'pentagon' | 'hexagon';
 
@@ -33,28 +36,15 @@ export interface GameState {
   };
 }
 
-// Compact castle blueprint sequence - proper castle formation with triangles directly on top of rectangles
-const blueprintSequence = [
-  { id: 'tower-center', type: 'rectangle' as ShapeType, position: { x: 400, y: 320 }, size: 'medium' as const },
-  { id: 'castle-base', type: 'square' as ShapeType, position: { x: 400, y: 350 }, size: 'large' as const },
-  { id: 'tower-left', type: 'rectangle' as ShapeType, position: { x: 340, y: 350 }, size: 'medium' as const },
-  { id: 'tower-right', type: 'rectangle' as ShapeType, position: { x: 460, y: 350 }, size: 'medium' as const },
-  { id: 'roof-left', type: 'triangle' as ShapeType, position: { x: 340, y: 302 }, size: 'medium' as const },
-  { id: 'roof-right', type: 'triangle' as ShapeType, position: { x: 460, y: 302 }, size: 'medium' as const },
-  { id: 'roof-center', type: 'triangle' as ShapeType, position: { x: 400, y: 272 }, size: 'medium' as const },
-  { id: 'sun', type: 'circle' as ShapeType, position: { x: 120, y: 150 }, size: 'medium' as const },
-  { id: 'tree-trunk', type: 'rectangle' as ShapeType, position: { x: 580, y: 350 }, size: 'small' as const },
-  { id: 'tree-top', type: 'pentagon' as ShapeType, position: { x: 580, y: 318 }, size: 'medium' as const },
-];
-
 export const ShapeShifterCastle: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const [currentBlueprint, setCurrentBlueprint] = useState<BlueprintType>('castle');
   const [filledSlots, setFilledSlots] = useState<{ [id: string]: boolean }>({});
   const [currentStep, setCurrentStep] = useState(0);
-  const [isExploreMode, setIsExploreMode] = useState(false);
-  const [exploreShapes, setExploreShapes] = useState<CastleSlot[]>([]);
+  const [showBlueprintSelector, setShowBlueprintSelector] = useState(false);
   const [hasShownIntro, setHasShownIntro] = useState(false);
 
+  const blueprintSequence = blueprints[currentBlueprint];
   const isCompleted = currentStep >= blueprintSequence.length;
 
   // Language change handled globally in App
@@ -69,11 +59,13 @@ export const ShapeShifterCastle: React.FC = () => {
     }
   }, [t, hasShownIntro]);
 
+
   console.log('ShapeShifterCastle render:', { 
     isCompleted, 
     currentStep, 
     totalSteps: blueprintSequence.length,
-    isExploreMode 
+    currentBlueprint,
+    showBlueprintSelector
   });
 
   // Get tutor message key based on step and slot
@@ -104,7 +96,7 @@ export const ShapeShifterCastle: React.FC = () => {
   };
 
   const handleShapePlaced = (slotId: string, shapeType: ShapeType) => {
-    if (isExploreMode) return;
+    if (showBlueprintSelector) return;
     
     const expected = blueprintSequence[currentStep];
     if (slotId === expected.id && shapeType === expected.type) {
@@ -127,14 +119,17 @@ export const ShapeShifterCastle: React.FC = () => {
       // Check if blueprint is complete
       if (newStep >= blueprintSequence.length) {
         setTimeout(() => {
-          tutorService.sendSuccessMessage(t, 'tutor.blueprint_complete');
+          const blueprintName = t(`blueprints.${currentBlueprint}.title`);
+          tutorService.sendSuccessMessage(t, 'tutor.blueprint_complete', { blueprintName });
+          // Show blueprint selector for next project
+          setShowBlueprintSelector(true);
         }, 1000);
       }
     }
   };
 
   const handleShapeClick = (shapeType: ShapeType) => {
-    if (isExploreMode) return;
+    if (showBlueprintSelector) return;
     
     const expected = blueprintSequence[currentStep];
     if (shapeType === expected.type) {
@@ -142,60 +137,21 @@ export const ShapeShifterCastle: React.FC = () => {
     }
   };
 
-  const handleExploreShapePlaced = (position: { x: number; y: number }, shapeType: ShapeType) => {
-    const newShape: CastleSlot = {
-      id: `explore-${Date.now()}-${Math.random()}`,
-      type: shapeType,
-      position,
-      size: 'medium',
-      filled: true,
-      active: false,
-      locked: false,
-      showSymmetry: false,
-      isExploreMode: true,
-      rotation: 0,
-    };
-    setExploreShapes(prev => [...prev, newShape]);
-  };
-
-  const handleExploreShapeRemoved = (shapeId: string) => {
-    setExploreShapes(prev => prev.filter(shape => shape.id !== shapeId));
-  };
-
-  const handleExploreShapeMoved = (shapeId: string, newPosition: { x: number; y: number }) => {
-    setExploreShapes(prev => prev.map(shape => 
-      shape.id === shapeId 
-        ? { ...shape, position: newPosition }
-        : shape
-    ));
-  };
-
-  const handleExploreShapeRotated = (shapeId: string) => {
-    setExploreShapes(prev => prev.map(shape => 
-      shape.id === shapeId 
-        ? { ...shape, rotation: (shape.rotation || 0) + 45 }
-        : shape
-    ));
-  };
-
-  const handleStartExplore = () => {
-    setIsExploreMode(true);
-    setTimeout(() => {
-      tutorService.sendInstructionMessage(t, 'tutor.explore_mode');
-    }, 500);
+  const handleBlueprintSelect = (blueprintType: BlueprintSelectorType) => {
+    setCurrentBlueprint(blueprintType as BlueprintType);
+    setFilledSlots({});
+    setCurrentStep(0);
+    setShowBlueprintSelector(false);
   };
 
   // Prepare slots for rendering
-  const slots: CastleSlot[] = [
-    ...blueprintSequence.map((slot, idx) => ({
-      ...slot,
-      filled: !!filledSlots[slot.id],
-      active: idx === currentStep && !isExploreMode,
-      locked: idx < currentStep,
-      showSymmetry: false,
-    })),
-    ...exploreShapes,
-  ];
+  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
+    ...slot,
+    filled: !!filledSlots[slot.id],
+    active: idx === currentStep && !showBlueprintSelector,
+    locked: idx < currentStep,
+    showSymmetry: false,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
@@ -231,7 +187,7 @@ export const ShapeShifterCastle: React.FC = () => {
       </div>
 
       {/* Progress Bar - only show in blueprint mode - responsive spacing */}
-      {!isExploreMode && (
+      {!showBlueprintSelector && (
         <ProgressBar
           completed={currentStep}
           total={blueprintSequence.length}
@@ -241,25 +197,31 @@ export const ShapeShifterCastle: React.FC = () => {
 
       {/* Main Game Area - responsive padding */}
       <div className="flex-1 flex flex-col px-2 md:px-4 lg:px-6">
-        <CastleInterface
-          slots={slots}
-          onShapePlaced={handleShapePlaced}
-          onExploreShapePlaced={handleExploreShapePlaced}
-          onExploreShapeRemoved={handleExploreShapeRemoved}
-          onExploreShapeMoved={handleExploreShapeMoved}
-          onExploreShapeRotated={handleExploreShapeRotated}
-          isExploreMode={isExploreMode}
-          isCompleted={isCompleted}
-          onStartExplore={handleStartExplore}
-        />
+        {showBlueprintSelector ? (
+          <BlueprintSelector onSelect={handleBlueprintSelect} />
+        ) : (
+          <CastleInterface
+            slots={slots}
+            onShapePlaced={handleShapePlaced}
+            onExploreShapePlaced={() => {}}
+            onExploreShapeRemoved={() => {}}
+            onExploreShapeMoved={() => {}}
+            onExploreShapeRotated={() => {}}
+            isExploreMode={false}
+            isCompleted={isCompleted}
+            onStartExplore={() => setShowBlueprintSelector(true)}
+          />
+        )}
       </div>
 
       {/* Shape Palette - responsive positioning and spacing */}
-      <ShapePalette 
-        className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6"
-        activeShapeType={!isExploreMode && currentStep < blueprintSequence.length ? blueprintSequence[currentStep].type : null}
-        onShapeClick={handleShapeClick}
-      />
+      {!showBlueprintSelector && (
+        <ShapePalette 
+          className="mx-2 mb-2 md:mx-4 md:mb-4 lg:mx-6 lg:mb-6"
+          activeShapeType={currentStep < blueprintSequence.length ? blueprintSequence[currentStep].type : null}
+          onShapeClick={handleShapeClick}
+        />
+      )}
     </div>
   );
 };

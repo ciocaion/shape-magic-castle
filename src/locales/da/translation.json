@@ -1,4 +1,24 @@
 {
+  "blueprints": {
+    "choose_next": "Godt Arbejde! Vælg Dit Næste Projekt",
+    "select_project": "Vælg en tegning at bygge næste",
+    "castle": {
+      "title": "Slot",
+      "description": "Byg et magisk slot med tårne og tage"
+    },
+    "airplane": {
+      "title": "Fly",
+      "description": "Lav et flyvende fly med vinger og propel"
+    },
+    "house": {
+      "title": "Hus",
+      "description": "Byg et hyggeligt hus med vinduer og et træ"
+    },
+    "minecraft": {
+      "title": "Minecraft Karakter",
+      "description": "Byg en firkantet Minecraft-stil karakter"
+    }
+  },
   "tutor": {
     "intro": "Hej Formskifter! 👋\nLad os bygge et magisk slot med former! 🧱🔺🟡\nFølg tegningen, trin for trin!",
     "rectangle_base": "Dette er et 🔷 rektangel!\nDet har 2 lange sider og 2 korte sider.\nVi bruger det som basis for dit slot! 🏰\n➡️ Træk 🔷 rektanglet til midten af tegningen!",
@@ -8,7 +28,7 @@
     "circle_sun": "Her kommer 🟠 cirklen!\nDen er rund, glat og har ingen hjørner. 🌞\n➡️ Placer 🟠 cirklen højt oppe på himlen—det er solen!\n🌟 Lad der være lys!",
     "rectangle_trunk": "Lad os plante et træ!\nVi starter med et 🔷 rektangel til stammen 🌳\n➡️ Placer 🔷 rektanglet ved siden af dit slot.",
     "pentagon_leaves": "Dette er en 🟡 femkant—den har 5 sider!\nVi bruger den som den bladrige del af træet 🍃\n➡️ Placer 🟡 femkanten oven på 🔷 stammen. Træ færdigt!",
-    "blueprint_complete": "🎉 Fantastisk! Dit slot er færdigt!\n🕹️ Skift til 3D Visning for at se det i fuld pragt!\nBrug din mus til at rotere, zoome og udforske!",
+    "blueprint_complete": "🎉 Fantastisk! Din {{blueprintName}} er færdig!\n🎨 Klar til din næste byggeudfordring?",
     "explore_mode": "Nu er det din tur til at være chefen!\nI Udforsk Tilstand kan du slippe former hvor som helst!\n💡 Prøv at stable, rotere eller lave dit eget skøre slot!\n🎠 Træhus? Robottårn? Gå løs!",
     "encouragements": {
       "nice_match": "Flot formtilpasning! ✅",

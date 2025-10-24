@@ -1,4 +1,24 @@
 {
+  "blueprints": {
+    "choose_next": "Great Work! Choose Your Next Project",
+    "select_project": "Pick a blueprint to build next",
+    "castle": {
+      "title": "Castle",
+      "description": "Build a magical castle with towers and roofs"
+    },
+    "airplane": {
+      "title": "Airplane",
+      "description": "Create a flying airplane with wings and propeller"
+    },
+    "house": {
+      "title": "House",
+      "description": "Build a cozy house with windows and a tree"
+    },
+    "minecraft": {
+      "title": "Minecraft Character",
+      "description": "Build a blocky Minecraft-style character"
+    }
+  },
   "tutor": {
     "intro": "Hey Shape Shifter! 👋\nLet's build a magical castle using shapes! 🧱🔺🟡\nFollow the blueprint, step by step!",
     "rectangle_base": "This is a 🔷 rectangle!\nIt has 2 long sides and 2 short sides.\nWe'll use it as the base of your castle! 🏰\n➡️ Drag the 🔷 rectangle to the middle of the blueprint!",
@@ -8,7 +28,7 @@
     "circle_sun": "Here comes the 🟠 circle!\nIt's round, smooth, and has no corners. 🌞\n➡️ Place the 🟠 circle high up in the sky—it's the sun!\n🌟 Let there be light!",
     "rectangle_trunk": "Let's plant a tree!\nWe'll start with a 🔷 rectangle for the trunk 🌳\n➡️ Place the 🔷 rectangle on the side of your castle.",
     "pentagon_leaves": "This is a 🟡 pentagon—it has 5 sides!\nWe'll use it as the leafy part of the tree 🍃\n➡️ Place the 🟡 pentagon on top of the 🔷 rectangle. Tree complete!",
-    "blueprint_complete": "🎉 Amazing! Your castle is finished!\n🕹️ Switch to 3D View to see it in full glory!\nUse your mouse to rotate, zoom, and explore!",
+    "blueprint_complete": "🎉 Amazing! Your {{blueprintName}} is finished!\n🎨 Ready for your next building challenge?",
     "explore_mode": "Now it's your turn to be the boss!\nIn Explore Mode, you can drop shapes anywhere!\n💡 Try stacking, rotating, or making your own wacky castle!\n🎠 Treehouse? Robot tower? Go wild!",
     "encouragements": {
       "nice_match": "Nice shape match! ✅",
