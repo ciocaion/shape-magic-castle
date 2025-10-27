@@ -1,12 +1,13 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, Text, Html, OrthographicCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
-import { Html } from '@react-three/drei';
 import { tutorService } from '../services/tutorService';
+
+const PX_PER_UNIT = 100;
 
 interface ThreeDCastleSceneProps {
   slots: CastleSlotType[];
@@ -38,21 +39,19 @@ const Shape3D: React.FC<{
 
   if (!slot.filled) return null;
 
-  // Map 2D pixel positions to 3D coordinates
-  const blueprintWidth = 800;
-  const blueprintHeight = 600;
-  
-  // For explore mode shapes, map pixels to world units 1:1 so 3D matches 2D adjacency
+  // Shared 2D(px) -> 3D(world) mapping using orthographic camera
+  // The 2D positions are center-anchored pixels; y is inverted in 3D
+  const { size } = useThree();
+  const w = size.width;
+  const h = size.height;
+  const x3d = (slot.position.x - w / 2) / PX_PER_UNIT;
+  const y3d = (h / 2 - slot.position.y) / PX_PER_UNIT;
+  const position: [number, number, number] = [x3d, y3d, 0];
+
   if (slot.isExploreMode) {
-    const scaleFactor = 0.01; // 1px -> 0.01 world units for faithful layout
-    const x3d = (slot.position.x - blueprintWidth / 2) * scaleFactor;
-    const y3d = -(slot.position.y - blueprintHeight / 2) * scaleFactor;
-    const position: [number, number, number] = [x3d, y3d, 0];
-    
     // Apply rotation from explore mode - convert degrees to radians and apply to Z-axis
     // Negate rotation to account for Y-axis flip (2D screen coords vs 3D world coords)
     const rotationZ = -(slot.rotation || 0) * (Math.PI / 180);
-    
     return (
       <mesh 
         ref={meshRef} 
@@ -64,38 +63,6 @@ const Shape3D: React.FC<{
       </mesh>
     );
   }
-  
-  // Apply scaling factor for better 3D spacing - reduced for closer castle structure
-  const scaleFactor = 0.015; // Smaller scale for closer, more cohesive castle
-  const x3d = (slot.position.x - blueprintWidth / 2) * scaleFactor;
-  let y3d = -(slot.position.y - blueprintHeight / 2) * scaleFactor;
-  
-  // Get size multiplier for positioning calculations
-  const sizeMultiplier = slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1;
-  
-  // Adjust positioning for proper alignment
-  if (slot.type === 'square') {
-    // Keep square at original position - rectangles will align to it
-    // No adjustment needed
-  } else if (slot.type === 'rectangle' && slot.size !== 'small') {
-    // Align rectangle bottom with square bottom
-    // Square bottom: y - 0.5 (square center at y, height 1)
-    // Rectangle height: 2.4, so rectangle extends 1.2 down from center
-    // For rectangle bottom to be at y - 0.5: rectangle center = (y - 0.5) + 1.2 = y + 0.7
-    y3d += 0.7; // Move rectangle up to align bottom with square
-  } else if (slot.type === 'rectangle' && slot.size === 'small') {
-    // Small rectangles (tree trunk) - keep existing logic
-    const rectangleHeight = 1.5 * 0.5;
-    y3d -= (rectangleHeight / 2) - 0.5;
-  } else if (slot.type === 'triangle') {
-    // Place triangles almost on top of rectangles
-    // Rectangle center: y + 0.7, rectangle height: 2.4
-    // Rectangle top: (y + 0.7) + 1.2 = y + 1.9
-    y3d += 1.9; // Position at rectangle top
-    y3d += 0.05; // Small gap to make it "almost" on top
-  }
-  
-  const position: [number, number, number] = [x3d, y3d, 0];
 
   return (
     <mesh ref={meshRef} position={position} onClick={handleClick}>
@@ -106,208 +73,74 @@ const Shape3D: React.FC<{
 
 // Extract shape geometry logic into a separate function
 const getShape3DGeometry = (slot: CastleSlotType) => {
-  const isExplore = slot.isExploreMode;
-
-  // When in explore mode, scale down shapes significantly to prevent 3D overlap
-  // while maintaining relative proportions and position mapping
-  const pxToWorld = 0.01; // 1px = 0.01 world units for positioning
-  const sizeReduction = 0.3; // Reduce 3D shape size to 30% to prevent overlap
+  // Convert 2D slot size (in px) to world units using shared PX_PER_UNIT
   const size = slot.size ?? 'medium';
 
   const getDimsPx = () => {
     if (slot.type === 'rectangle') {
       if (size === 'small') return { w: 16, h: 64 };
-      // Default rectangle used in explore mode (vertical by default, rotation applied later)
+      if (size === 'large') return { w: 80, h: 80 }; // keep aspect; we will treat as square-like rect if needed
       return { w: 32, h: 96 };
     }
+    // squares, triangles, circles, pentagon, hexagon share same side for blueprint
     const side = size === 'small' ? 32 : size === 'large' ? 80 : 48;
     return { w: side, h: side };
   };
 
   const dimsPx = getDimsPx();
-  const wWorld = dimsPx.w * pxToWorld * sizeReduction;
-  const hWorld = dimsPx.h * pxToWorld * sizeReduction;
-  const exploreDepth = 0.15; // thin depth to reduce occlusion
-
-  // Non-explore sizing (existing 3D castle look)
-  const nonExploreSizeMultiplier = slot.size === 'large' ? 1.5 : slot.size === 'small' ? 0.5 : 1;
+  const wWorld = dimsPx.w / PX_PER_UNIT;
+  const hWorld = dimsPx.h / PX_PER_UNIT;
+  const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
 
   switch (slot.type) {
-    case 'triangle':
-      if (isExplore) {
-        return (
-          <>
-            <coneGeometry args={[wWorld / 2, hWorld, 3]} />
-            <meshStandardMaterial color="#10b981" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.ConeGeometry(wWorld / 2, hWorld, 3)]} />
-                <lineBasicMaterial color="#06d6a0" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    case 'triangle': {
       return (
         <>
-          <coneGeometry args={[0.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 3]} />
+          <coneGeometry args={[wWorld / 2, hWorld, 3]} />
           <meshStandardMaterial color="#10b981" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={[new THREE.ConeGeometry(0.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 3)]} />
-              <lineBasicMaterial color="#06d6a0" />
-            </lineSegments>
-          )}
         </>
       );
-
-    case 'circle':
-      if (isExplore) {
-        return (
-          <>
-            <sphereGeometry args={[wWorld / 2, 32, 32]} />
-            <meshStandardMaterial color="#fbbf24" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.SphereGeometry(wWorld / 2, 16, 16)]} />
-                <lineBasicMaterial color="#fde047" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    }
+    case 'circle': {
       return (
         <>
-          <sphereGeometry args={[0.6 * nonExploreSizeMultiplier, 32, 32]} />
+          <sphereGeometry args={[wWorld / 2, 32, 32]} />
           <meshStandardMaterial color="#fbbf24" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={[new THREE.SphereGeometry(0.6 * nonExploreSizeMultiplier, 16, 16)]} />
-              <lineBasicMaterial color="#fde047" />
-            </lineSegments>
-          )}
         </>
       );
-
-    case 'square':
-      if (isExplore) {
-        return (
-          <>
-            <boxGeometry args={[wWorld, hWorld, exploreDepth]} />
-            <meshStandardMaterial color="#ef4444" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.BoxGeometry(wWorld, hWorld, exploreDepth)]} />
-                <lineBasicMaterial color="#f87171" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    }
+    case 'square': {
       return (
         <>
-          <boxGeometry args={[1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
+          <boxGeometry args={[wWorld, hWorld, depth]} />
           <meshStandardMaterial color="#ef4444" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={[new THREE.BoxGeometry(1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)]} />
-              <lineBasicMaterial color="#f87171" />
-            </lineSegments>
-          )}
         </>
       );
-
-    case 'pentagon':
-      if (isExplore) {
-        return (
-          <>
-            <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 5]} />
-            <meshStandardMaterial color="#22c55e" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.CylinderGeometry(wWorld / 2, wWorld / 2, hWorld, 5)]} />
-                <lineBasicMaterial color="#4ade80" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    }
+    case 'pentagon': {
       return (
         <>
-          <cylinderGeometry args={[0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 5]} />
+          <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 5]} />
           <meshStandardMaterial color="#22c55e" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 5)]} />
-              <lineBasicMaterial color="#4ade80" />
-            </lineSegments>
-          )}
         </>
       );
-
-    case 'hexagon':
-      if (isExplore) {
-        return (
-          <>
-            <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 6]} />
-            <meshStandardMaterial color="#ec4899" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.CylinderGeometry(wWorld / 2, wWorld / 2, hWorld, 6)]} />
-                <lineBasicMaterial color="#f472b6" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    }
+    case 'hexagon': {
       return (
         <>
-          <cylinderGeometry args={[0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 6]} />
+          <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 6]} />
           <meshStandardMaterial color="#ec4899" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={[new THREE.CylinderGeometry(0.6 * nonExploreSizeMultiplier, 0.6 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier, 6)]} />
-              <lineBasicMaterial color="#f472b6" />
-            </lineSegments>
-          )}
         </>
       );
-
-    case 'rectangle':
-      if (isExplore) {
-        return (
-          <>
-            <boxGeometry args={[wWorld, hWorld, exploreDepth]} />
-            <meshStandardMaterial color="#8b5cf6" />
-            {slot.showSymmetry && (
-              <lineSegments>
-                <edgesGeometry args={[new THREE.BoxGeometry(wWorld, hWorld, exploreDepth)]} />
-                <lineBasicMaterial color="#a78bfa" />
-              </lineSegments>
-            )}
-          </>
-        );
-      }
+    }
+    case 'rectangle': {
       return (
         <>
-          {slot.size === 'small' ? (
-            <boxGeometry args={[0.4 * nonExploreSizeMultiplier, 1.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
-          ) : (
-            <boxGeometry args={[1.0 * nonExploreSizeMultiplier, 2.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier]} />
-          )}
+          <boxGeometry args={[wWorld, hWorld, depth]} />
           <meshStandardMaterial color="#8b5cf6" />
-          {slot.showSymmetry && (
-            <lineSegments>
-              <edgesGeometry args={slot.size === 'small' ?
-                [new THREE.BoxGeometry(0.4 * nonExploreSizeMultiplier, 1.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)] :
-                [new THREE.BoxGeometry(1.0 * nonExploreSizeMultiplier, 2.8 * nonExploreSizeMultiplier, 1.2 * nonExploreSizeMultiplier)]
-              } />
-              <lineBasicMaterial color="#a78bfa" />
-            </lineSegments>
-          )}
         </>
       );
-
+    }
     default:
       return null;
   }
@@ -357,7 +190,8 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
 
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
+      <Canvas>
+        <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={PX_PER_UNIT} near={0.1} far={1000} />
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
@@ -391,11 +225,11 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
         <OrbitControls 
           enableZoom={true} 
           enablePan={true}
+          enableRotate={false}
           enableDamping={true}
           dampingFactor={0.05}
-          maxDistance={20}
-          minDistance={5}
-          maxPolarAngle={Math.PI / 2}
+          minZoom={PX_PER_UNIT * 0.5}
+          maxZoom={PX_PER_UNIT * 2}
         />
       </Canvas>
     </div>
