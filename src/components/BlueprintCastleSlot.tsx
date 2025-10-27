@@ -172,6 +172,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             size={slot.size || 'medium'}
             is3D={true}
             isDropped={true}
+            colorIndex={slot.colorIndex}
           />
         </div>
         {/* Control buttons - only show on hover and not when dragging */}
@@ -241,6 +242,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             size={slot.size || 'medium'}
             is3D={true}
             isDropped={true}
+            colorIndex={slot.colorIndex}
           />
         </div>
       </div>
@@ -283,7 +285,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             />
           </svg>
           <div className="opacity-30">
-            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} colorIndex={slot.colorIndex} />
           </div>
           {slot.active && (
             <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
@@ -314,7 +316,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             />
           </svg>
           <div className="opacity-30">
-            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} colorIndex={slot.colorIndex} />
           </div>
           {slot.active && (
             <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
@@ -343,7 +345,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             />
           </svg>
           <div className="opacity-30">
-            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} colorIndex={slot.colorIndex} />
           </div>
           {slot.active && (
             <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
@@ -359,7 +361,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           style={{ width: `${slotSize.width}px`, height: `${slotSize.height}px`, boxShadow: slot.active ? '0 0 16px 4px #22d3ee' : undefined }}
         >
           <div className="opacity-30">
-            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} />
+            <DraggableShape type={slot.type} size={slot.size || 'medium'} isDropped={true} colorIndex={slot.colorIndex} />
           </div>
           {slot.active && (
             <div className="absolute left-1/2 top-[-4rem] -translate-x-1/2 px-4 py-2 bg-cyan-400/80 text-cyan-900 font-bold rounded-xl border border-cyan-300 text-lg shadow-lg pointer-events-none animate-float-prompt">
