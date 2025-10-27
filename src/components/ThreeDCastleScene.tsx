@@ -225,7 +225,7 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
         <OrbitControls 
           enableZoom={true} 
           enablePan={true}
-          enableRotate={false}
+          enableRotate={true}
           enableDamping={true}
           dampingFactor={0.05}
           minZoom={PX_PER_UNIT * 0.5}
