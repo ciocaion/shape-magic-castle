@@ -25,6 +25,7 @@ export interface CastleSlot {
   rotation?: number;
   colorIndex?: number;
   color?: string;
+  drawOrder: number;
 }
 
 export interface GameState {
@@ -170,6 +171,7 @@ export const ShapeShifterCastle: React.FC = () => {
       showSymmetry: false,
       colorIndex: sameTypeBefore,
       color: shapeColors[slot.id],
+      drawOrder: slot.drawOrder,
     };
   });
 

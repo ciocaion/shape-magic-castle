@@ -9,6 +9,13 @@ import { tutorService } from '../services/tutorService';
 import { getShapeColor } from '../lib/shapeColors';
 
 const PX_PER_UNIT = 100;
+const LAYER_STEP = 0.01;   // world units between layers
+const EPS = 0.001;         // to avoid z-fighting
+
+// Convert draw order to z position
+const zFromOrder = (drawOrder: number): number => {
+  return drawOrder * LAYER_STEP;
+};
 
 interface ThreeDCastleSceneProps {
   slots: CastleSlotType[];
@@ -47,7 +54,9 @@ const Shape3D: React.FC<{
   const h = size.height;
   const x3d = (slot.position.x - w / 2) / PX_PER_UNIT;
   const y3d = (h / 2 - slot.position.y) / PX_PER_UNIT;
-  const position: [number, number, number] = [x3d, y3d, 0];
+  // Calculate z position based on draw order for proper stacking
+  const z3d = zFromOrder(slot.drawOrder);
+  const position: [number, number, number] = [x3d, y3d, z3d];
 
   if (slot.isExploreMode) {
     // Apply rotation from explore mode - convert degrees to radians and apply to Z-axis
@@ -91,7 +100,26 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   const dimsPx = getDimsPx();
   const wWorld = dimsPx.w / PX_PER_UNIT;
   const hWorld = dimsPx.h / PX_PER_UNIT;
-  const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
+  
+  // Real thickness based on shape type - shapes sit on top of each other
+  const getThickness = () => {
+    switch (slot.type) {
+      case 'square':
+      case 'rectangle':
+        return 0.20; // Walls and structural elements have more depth
+      case 'triangle':
+        return 0.15; // Roofs are slightly thinner
+      case 'circle':
+        return 0.12; // Windows and decorative elements
+      case 'pentagon':
+      case 'hexagon':
+        return 0.12; // Decorative shapes
+      default:
+        return 0.12;
+    }
+  };
+  
+  const depth = getThickness();
 
   // Get matching color from shared color system - use custom color if provided
   const color = slot.color || getShapeColor(slot.type, slot.colorIndex || 0);

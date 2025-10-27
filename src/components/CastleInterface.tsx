@@ -131,11 +131,11 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-1 md:p-4 lg:p-8">
-      {/* View Toggle with Explore Mode - responsive button layout */}
-      <div className="mb-2 md:mb-4 flex flex-col sm:flex-row gap-2 z-30 relative w-full max-w-lg justify-center">
+      {/* View Toggle with Explore Mode - fully responsive button layout */}
+      <div className="mb-2 md:mb-4 flex flex-col sm:flex-row gap-2 z-30 relative w-full px-2 sm:px-0 sm:max-w-lg justify-center">
         <button
           onClick={() => setView3D(false)}
-          className={`px-3 py-2 md:px-4 md:py-2 rounded-lg transition-all text-sm md:text-base ${
+          className={`w-full sm:w-auto px-4 py-2.5 md:px-5 md:py-3 rounded-lg transition-all text-sm md:text-base font-medium touch-manipulation ${
             !view3D 
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -145,7 +145,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
         </button>
         <button
           onClick={() => setView3D(true)}
-          className={`px-3 py-2 md:px-4 md:py-2 rounded-lg transition-all text-sm md:text-base ${
+          className={`w-full sm:w-auto px-4 py-2.5 md:px-5 md:py-3 rounded-lg transition-all text-sm md:text-base font-medium touch-manipulation ${
             view3D 
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -163,11 +163,11 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
           </span>
         </button>
         
-        {/* Explore Mode Button - responsive sizing and text */}
+        {/* Explore Mode Button - full width on mobile, responsive sizing */}
         {isCompleted && !isExploreMode && (
           <button
             onClick={onStartExplore}
-            className="px-3 py-2 md:px-4 md:py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-lg text-sm md:text-base"
+            className="w-full sm:w-auto px-4 py-2.5 md:px-5 md:py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 active:bg-green-800 transition-colors shadow-lg text-sm md:text-base touch-manipulation"
           >
             <span className="hidden sm:inline">{t('ui.explore_shapes')}</span>
             <span className="sm:hidden">{t('ui.explore')}</span>
@@ -176,7 +176,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       </div>
       
       <div 
-        className="relative w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden"
+        className="relative w-full max-w-full sm:max-w-lg md:max-w-2xl lg:max-w-4xl aspect-video bg-slate-800/90 backdrop-blur-sm rounded-lg md:rounded-gradeaid shadow-gentle border-2 border-cyan-400/30 overflow-hidden mx-2 sm:mx-0"
         onDrop={handleCanvasDrop}
         onDragOver={handleCanvasDragOver}
       >
