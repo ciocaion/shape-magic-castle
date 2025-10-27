@@ -189,30 +189,26 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
     : filledSlots;
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {/* Fixed back button when a shape is isolated */}
+      {isolatedShapeId && (
+        <button 
+          onClick={handleBackClick}
+          className="absolute top-4 left-4 z-10 bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
+        >
+          <span className="text-primary font-semibold text-sm md:text-base">←</span>
+          <span className="text-foreground font-medium text-xs md:text-sm">
+            <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
+            <span className="sm:hidden">{t('ui.back')}</span>
+          </span>
+        </button>
+      )}
+      
       <Canvas>
         <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={PX_PER_UNIT} near={0.1} far={1000} />
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <pointLight position={[-10, -10, -5]} intensity={0.5} />
-        
-        {/* Back button when a shape is isolated - responsive positioning and sizing */}
-        {isolatedShapeId && (
-          <Html position={[-4, 4, 0]}>
-            <button 
-              onClick={handleBackClick}
-              className="bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
-            >
-              <span className="text-primary font-semibold text-sm md:text-base">←</span>
-              <span className="text-foreground font-medium text-xs md:text-sm">
-                <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
-                <span className="sm:hidden">{t('ui.back')}</span>
-              </span>
-            </button>
-          </Html>
-        )}
-        
-        {/* No inline instructional text when there are no shapes; message is sent via tutor service */}
         
         {visibleSlots.map((slot) => (
           <Shape3D 
