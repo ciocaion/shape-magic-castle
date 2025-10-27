@@ -11,6 +11,7 @@ interface DraggableShapeProps {
   isDropped?: boolean;
   onClick?: () => void;
   colorIndex?: number;
+  color?: string;
 }
 
 export const DraggableShape: React.FC<DraggableShapeProps> = ({
@@ -20,7 +21,8 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   is3D = false,
   isDropped = false,
   onClick,
-  colorIndex = 0
+  colorIndex = 0,
+  color
 }) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,8 +32,8 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
     large: 'w-[80px] h-[80px]' // significantly bigger for castle base
   };
 
-  // Get color for this shape based on its type and color index
-  const shapeColor = getShapeColor(type, colorIndex);
+  // Get color for this shape - use custom color if provided, otherwise use color from palette
+  const shapeColor = color || getShapeColor(type, colorIndex);
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);

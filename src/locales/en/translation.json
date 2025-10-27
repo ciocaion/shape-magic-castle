@@ -98,6 +98,7 @@
       "circle": "Add Circle",
       "pentagon": "Add Pentagon",
       "hexagon": "Add Hexagon"
-    }
+    },
+    "choose_color": "Choose Color"
   }
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
+import { ColorPicker } from './ColorPicker';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
@@ -11,6 +12,7 @@ interface CastleInterfaceProps {
   onExploreShapeRemoved?: (shapeId: string) => void;
   onExploreShapeMoved?: (shapeId: string, newPosition: { x: number; y: number }) => void;
   onExploreShapeRotated?: (shapeId: string) => void;
+  onColorChange?: (slotId: string, color: string) => void;
   isExploreMode?: boolean;
   isCompleted?: boolean;
   onStartExplore?: () => void;
@@ -23,12 +25,14 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   onExploreShapeRemoved,
   onExploreShapeMoved,
   onExploreShapeRotated,
+  onColorChange,
   isExploreMode = false,
   isCompleted = false,
   onStartExplore
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
+  const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
   const { t } = useTranslation();
 
   // Force reset to blueprint view when entering explore mode
@@ -108,6 +112,22 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       onExploreShapeRotated(shapeId);
     }
   };
+
+  const handleShapeClick = (slotId: string) => {
+    const slot = slots.find(s => s.id === slotId);
+    if (slot && slot.filled && !isExploreMode) {
+      setSelectedShapeId(slotId);
+    }
+  };
+
+  const handleColorSelect = (color: string) => {
+    if (selectedShapeId && onColorChange) {
+      onColorChange(selectedShapeId, color);
+      setSelectedShapeId(null);
+    }
+  };
+
+  const selectedSlot = slots.find(s => s.id === selectedShapeId);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-1 md:p-4 lg:p-8">
@@ -213,10 +233,21 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
                 onRemove={slot.isExploreMode ? handleExploreShapeRemove : undefined}
                 onMove={slot.isExploreMode ? handleExploreShapeMove : undefined}
                 onRotate={slot.isExploreMode ? handleExploreShapeRotate : undefined}
+                onClick={handleShapeClick}
+                isSelected={selectedShapeId === slot.id}
                 hasError={dragError === slot.id}
                 isExploreMode={isExploreMode}
               />
             ))}
+            
+            {/* Color Picker */}
+            {selectedShapeId && selectedSlot && !isExploreMode && (
+              <ColorPicker
+                selectedColor={selectedSlot.color}
+                onColorSelect={handleColorSelect}
+                onClose={() => setSelectedShapeId(null)}
+              />
+            )}
             
             {/* Blueprint measurement lines - only show in blueprint mode */}
             {!isExploreMode && (

@@ -93,8 +93,8 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   const hWorld = dimsPx.h / PX_PER_UNIT;
   const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
 
-  // Get matching color from shared color system
-  const color = getShapeColor(slot.type, slot.colorIndex || 0);
+  // Get matching color from shared color system - use custom color if provided
+  const color = slot.color || getShapeColor(slot.type, slot.colorIndex || 0);
 
   switch (slot.type) {
     case 'triangle': {
