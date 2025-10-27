@@ -11,6 +11,8 @@ interface BlueprintCastleSlotProps {
   onRotate?: (shapeId: string) => void;
   hasError?: boolean;
   isExploreMode?: boolean;
+  onClick?: (slotId: string) => void;
+  isSelected?: boolean;
 }
 
 export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({ 
@@ -20,7 +22,9 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   onMove,
   onRotate,
   hasError,
-  isExploreMode = false 
+  isExploreMode = false,
+  onClick,
+  isSelected = false
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
@@ -223,7 +227,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
   if (slot.filled || slot.locked) {
     return (
       <div
-        className="absolute"
+        className={`absolute cursor-pointer transition-all ${isSelected ? 'ring-4 ring-primary ring-offset-2 ring-offset-slate-800 rounded-lg' : ''}`}
         style={{ 
           left: `${slot.position.x}px`, 
           top: `${slot.position.y}px`,
@@ -231,6 +235,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
           width: `${slotSize.width}px`,
           height: `${slotSize.height}px`,
         }}
+        onClick={() => onClick?.(slot.id)}
       >
         <div 
           className={`relative ${isTransforming ? 'animate-transform-to-3d' : ''}`} 

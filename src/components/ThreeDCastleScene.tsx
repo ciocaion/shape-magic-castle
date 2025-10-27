@@ -6,13 +6,11 @@ import { OrbitControls, Text, Html, OrthographicCamera } from '@react-three/drei
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
 import { tutorService } from '../services/tutorService';
-import { ColorPicker } from './ColorPicker';
 
 const PX_PER_UNIT = 100;
 
 interface ThreeDCastleSceneProps {
   slots: CastleSlotType[];
-  onColorChange?: (slotId: string, color: string) => void;
 }
 
 const Shape3D: React.FC<{ 
@@ -160,7 +158,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   }
 };
 
-export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots, onColorChange }) => {
+export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) => {
   const { t } = useTranslation();
   
   // Debug: log which slots are filled and will be rendered
@@ -169,9 +167,6 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots, onC
 
   // State for shape isolation
   const [isolatedShapeId, setIsolatedShapeId] = useState<string | null>(null);
-  
-  // Get the current isolated slot
-  const isolatedSlot = isolatedShapeId ? filledSlots.find(slot => slot.id === isolatedShapeId) : null;
 
   // If no shapes placed, send an instructional tutor message instead of showing text in UI
   useEffect(() => {
@@ -200,12 +195,6 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots, onC
     setIsolatedShapeId(null);
   };
 
-  const handleColorSelect = (color: string) => {
-    if (isolatedShapeId && onColorChange) {
-      onColorChange(isolatedShapeId, color);
-    }
-  };
-
   // Filter slots based on isolation
   const visibleSlots = isolatedShapeId 
     ? filledSlots.filter(slot => slot.id === isolatedShapeId)
@@ -215,26 +204,16 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots, onC
     <div className="w-full h-full relative">
       {/* Fixed back button when a shape is isolated */}
       {isolatedShapeId && (
-        <>
-          <button 
-            onClick={handleBackClick}
-            className="absolute top-4 left-4 z-10 bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
-          >
-            <span className="text-primary font-semibold text-sm md:text-base">←</span>
-            <span className="text-foreground font-medium text-xs md:text-sm">
-              <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
-              <span className="sm:hidden">{t('ui.back')}</span>
-            </span>
-          </button>
-          
-          {/* Color picker when a shape is isolated */}
-          {isolatedSlot && (
-            <ColorPicker 
-              selectedColor={isolatedSlot.color || '#888888'} 
-              onColorSelect={handleColorSelect}
-            />
-          )}
-        </>
+        <button 
+          onClick={handleBackClick}
+          className="absolute top-4 left-4 z-10 bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
+        >
+          <span className="text-primary font-semibold text-sm md:text-base">←</span>
+          <span className="text-foreground font-medium text-xs md:text-sm">
+            <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
+            <span className="sm:hidden">{t('ui.back')}</span>
+          </span>
+        </button>
       )}
       
       <Canvas>
