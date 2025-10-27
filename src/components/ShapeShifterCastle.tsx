@@ -23,7 +23,7 @@ export interface CastleSlot {
   showSymmetry: boolean;
   isExploreMode?: boolean;
   rotation?: number;
-  color?: string;
+  colorIndex?: number;
 }
 
 export interface GameState {
@@ -44,7 +44,6 @@ export const ShapeShifterCastle: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showBlueprintSelector, setShowBlueprintSelector] = useState(false);
   const [hasShownIntro, setHasShownIntro] = useState(false);
-  const [shapeColors, setShapeColors] = useState<{ [id: string]: string }>({});
 
   const blueprintSequence = blueprints[currentBlueprint];
   const isCompleted = currentStep >= blueprintSequence.length;
@@ -143,11 +142,6 @@ export const ShapeShifterCastle: React.FC = () => {
     setFilledSlots({});
     setCurrentStep(0);
     setShowBlueprintSelector(false);
-    setShapeColors({});
-  };
-
-  const handleColorChange = (slotId: string, color: string) => {
-    setShapeColors(prev => ({ ...prev, [slotId]: color }));
   };
 
   const handleExploreClick = () => {
@@ -155,15 +149,22 @@ export const ShapeShifterCastle: React.FC = () => {
     setShowBlueprintSelector(true);
   };
 
-  // Prepare slots for rendering
-  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
-    ...slot,
-    filled: !!filledSlots[slot.id],
-    active: idx === currentStep && !showBlueprintSelector,
-    locked: idx < currentStep,
-    showSymmetry: false,
-    color: shapeColors[slot.id],
-  }));
+  // Prepare slots for rendering with color indices based on shape type occurrence
+  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => {
+    // Count how many shapes of the same type have been placed before this one
+    const sameTypeBefore = blueprintSequence
+      .slice(0, idx)
+      .filter(s => s.type === slot.type).length;
+    
+    return {
+      ...slot,
+      filled: !!filledSlots[slot.id],
+      active: idx === currentStep && !showBlueprintSelector,
+      locked: idx < currentStep,
+      showSymmetry: false,
+      colorIndex: sameTypeBefore,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">
@@ -222,7 +223,6 @@ export const ShapeShifterCastle: React.FC = () => {
             isExploreMode={false}
             isCompleted={isCompleted}
             onStartExplore={handleExploreClick}
-            onColorChange={handleColorChange}
           />
         )}
       </div>

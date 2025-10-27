@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BlueprintCastleSlot } from './BlueprintCastleSlot';
 import { ThreeDCastleScene } from './ThreeDCastleScene';
-import { ColorPicker } from './ColorPicker';
 import type { CastleSlot as CastleSlotType, ShapeType } from './ShapeShifterCastle';
 
 interface CastleInterfaceProps {
@@ -15,7 +14,6 @@ interface CastleInterfaceProps {
   isExploreMode?: boolean;
   isCompleted?: boolean;
   onStartExplore?: () => void;
-  onColorChange?: (slotId: string, color: string) => void;
 }
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
@@ -27,12 +25,10 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   onExploreShapeRotated,
   isExploreMode = false,
   isCompleted = false,
-  onStartExplore,
-  onColorChange
+  onStartExplore
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
-  const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
   const { t } = useTranslation();
 
   // Force reset to blueprint view when entering explore mode
@@ -110,20 +106,6 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   const handleExploreShapeRotate = (shapeId: string) => {
     if (onExploreShapeRotated) {
       onExploreShapeRotated(shapeId);
-    }
-  };
-
-  const handleShapeClick = (slotId: string) => {
-    // Only allow selection of filled blueprint slots in blueprint view
-    const slot = slots.find(s => s.id === slotId);
-    if (!view3D && slot && slot.filled && !slot.isExploreMode) {
-      setSelectedShapeId(slotId === selectedShapeId ? null : slotId);
-    }
-  };
-
-  const handleColorSelect = (color: string) => {
-    if (selectedShapeId && onColorChange) {
-      onColorChange(selectedShapeId, color);
     }
   };
 
@@ -222,16 +204,6 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
               <span className="text-cyan-400 font-mono text-xs">REV 001</span>
             </div>
             
-            {/* Color Picker - show when a shape is selected */}
-            {selectedShapeId && !isExploreMode && (
-              <div className="absolute top-4 right-4 z-50">
-                <ColorPicker 
-                  selectedColor={slots.find(s => s.id === selectedShapeId)?.color || '#888888'} 
-                  onColorSelect={handleColorSelect}
-                />
-              </div>
-            )}
-
             {/* Render Blueprint Castle Slots */}
             {slots.map((slot) => (
               <BlueprintCastleSlot
@@ -243,8 +215,6 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
                 onRotate={slot.isExploreMode ? handleExploreShapeRotate : undefined}
                 hasError={dragError === slot.id}
                 isExploreMode={isExploreMode}
-                onClick={handleShapeClick}
-                isSelected={slot.id === selectedShapeId}
               />
             ))}
             

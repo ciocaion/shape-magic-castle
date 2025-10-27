@@ -6,6 +6,7 @@ import { OrbitControls, Text, Html, OrthographicCamera } from '@react-three/drei
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
 import { tutorService } from '../services/tutorService';
+import { getShapeColor } from '../lib/shapeColors';
 
 const PX_PER_UNIT = 100;
 
@@ -92,17 +93,8 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   const hWorld = dimsPx.h / PX_PER_UNIT;
   const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
 
-  // Default colors if not specified
-  const defaultColors: Record<string, string> = {
-    triangle: '#10b981',
-    circle: '#fbbf24',
-    square: '#ef4444',
-    pentagon: '#22c55e',
-    hexagon: '#ec4899',
-    rectangle: '#8b5cf6',
-  };
-
-  const color = slot.color || defaultColors[slot.type] || '#888888';
+  // Get matching color from shared color system
+  const color = getShapeColor(slot.type, slot.colorIndex || 0);
 
   switch (slot.type) {
     case 'triangle': {

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import type { ShapeType } from './ShapeShifterCastle';
+import { getShapeColor } from '../lib/shapeColors';
 
 interface DraggableShapeProps {
   type: ShapeType;
@@ -9,7 +10,7 @@ interface DraggableShapeProps {
   is3D?: boolean;
   isDropped?: boolean;
   onClick?: () => void;
-  color?: string;
+  colorIndex?: number;
 }
 
 export const DraggableShape: React.FC<DraggableShapeProps> = ({
@@ -19,21 +20,9 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   is3D = false,
   isDropped = false,
   onClick,
-  color
+  colorIndex = 0
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-
-  // Default colors if not specified
-  const defaultColors: Record<ShapeType, string> = {
-    square: 'hsl(var(--shape-square))',
-    rectangle: 'hsl(var(--shape-rectangle))',
-    triangle: 'hsl(var(--shape-triangle))',
-    circle: 'hsl(var(--shape-circle))',
-    pentagon: 'hsl(var(--shape-star))',
-    hexagon: 'hsl(var(--shape-heart))',
-  };
-
-  const shapeColor = color || defaultColors[type];
 
   const sizeClasses = {
     small: type === 'rectangle' ? 'w-[16px] h-[64px]' : 'w-[32px] h-[32px]', // thin and tall for tree trunk, normal for others
@@ -41,6 +30,8 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
     large: 'w-[80px] h-[80px]' // significantly bigger for castle base
   };
 
+  // Get color for this shape based on its type and color index
+  const shapeColor = getShapeColor(type, colorIndex);
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
