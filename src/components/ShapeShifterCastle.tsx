@@ -23,6 +23,7 @@ export interface CastleSlot {
   showSymmetry: boolean;
   isExploreMode?: boolean;
   rotation?: number;
+  color?: string;
 }
 
 export interface GameState {
@@ -43,6 +44,7 @@ export const ShapeShifterCastle: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showBlueprintSelector, setShowBlueprintSelector] = useState(false);
   const [hasShownIntro, setHasShownIntro] = useState(false);
+  const [shapeColors, setShapeColors] = useState<{ [id: string]: string }>({});
 
   const blueprintSequence = blueprints[currentBlueprint];
   const isCompleted = currentStep >= blueprintSequence.length;
@@ -141,6 +143,11 @@ export const ShapeShifterCastle: React.FC = () => {
     setFilledSlots({});
     setCurrentStep(0);
     setShowBlueprintSelector(false);
+    setShapeColors({});
+  };
+
+  const handleColorChange = (slotId: string, color: string) => {
+    setShapeColors(prev => ({ ...prev, [slotId]: color }));
   };
 
   const handleExploreClick = () => {
@@ -155,6 +162,7 @@ export const ShapeShifterCastle: React.FC = () => {
     active: idx === currentStep && !showBlueprintSelector,
     locked: idx < currentStep,
     showSymmetry: false,
+    color: shapeColors[slot.id],
   }));
 
   return (
@@ -214,6 +222,7 @@ export const ShapeShifterCastle: React.FC = () => {
             isExploreMode={false}
             isCompleted={isCompleted}
             onStartExplore={handleExploreClick}
+            onColorChange={handleColorChange}
           />
         )}
       </div>

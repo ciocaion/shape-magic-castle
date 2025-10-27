@@ -6,11 +6,13 @@ import { OrbitControls, Text, Html, OrthographicCamera } from '@react-three/drei
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
 import { tutorService } from '../services/tutorService';
+import { ColorPicker } from './ColorPicker';
 
 const PX_PER_UNIT = 100;
 
 interface ThreeDCastleSceneProps {
   slots: CastleSlotType[];
+  onColorChange?: (slotId: string, color: string) => void;
 }
 
 const Shape3D: React.FC<{ 
@@ -92,12 +94,24 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   const hWorld = dimsPx.h / PX_PER_UNIT;
   const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
 
+  // Default colors if not specified
+  const defaultColors: Record<string, string> = {
+    triangle: '#10b981',
+    circle: '#fbbf24',
+    square: '#ef4444',
+    pentagon: '#22c55e',
+    hexagon: '#ec4899',
+    rectangle: '#8b5cf6',
+  };
+
+  const color = slot.color || defaultColors[slot.type] || '#888888';
+
   switch (slot.type) {
     case 'triangle': {
       return (
         <>
           <coneGeometry args={[wWorld / 2, hWorld, 3]} />
-          <meshStandardMaterial color="#10b981" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -105,7 +119,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <sphereGeometry args={[wWorld / 2, 32, 32]} />
-          <meshStandardMaterial color="#fbbf24" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -113,7 +127,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <boxGeometry args={[wWorld, hWorld, depth]} />
-          <meshStandardMaterial color="#ef4444" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -121,7 +135,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 5]} />
-          <meshStandardMaterial color="#22c55e" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -129,7 +143,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 6]} />
-          <meshStandardMaterial color="#ec4899" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -137,7 +151,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <boxGeometry args={[wWorld, hWorld, depth]} />
-          <meshStandardMaterial color="#8b5cf6" />
+          <meshStandardMaterial color={color} />
         </>
       );
     }
@@ -146,7 +160,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   }
 };
 
-export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) => {
+export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots, onColorChange }) => {
   const { t } = useTranslation();
   
   // Debug: log which slots are filled and will be rendered
@@ -155,6 +169,9 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
 
   // State for shape isolation
   const [isolatedShapeId, setIsolatedShapeId] = useState<string | null>(null);
+  
+  // Get the current isolated slot
+  const isolatedSlot = isolatedShapeId ? filledSlots.find(slot => slot.id === isolatedShapeId) : null;
 
   // If no shapes placed, send an instructional tutor message instead of showing text in UI
   useEffect(() => {
@@ -183,6 +200,12 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
     setIsolatedShapeId(null);
   };
 
+  const handleColorSelect = (color: string) => {
+    if (isolatedShapeId && onColorChange) {
+      onColorChange(isolatedShapeId, color);
+    }
+  };
+
   // Filter slots based on isolation
   const visibleSlots = isolatedShapeId 
     ? filledSlots.filter(slot => slot.id === isolatedShapeId)
@@ -192,16 +215,26 @@ export const ThreeDCastleScene: React.FC<ThreeDCastleSceneProps> = ({ slots }) =
     <div className="w-full h-full relative">
       {/* Fixed back button when a shape is isolated */}
       {isolatedShapeId && (
-        <button 
-          onClick={handleBackClick}
-          className="absolute top-4 left-4 z-10 bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
-        >
-          <span className="text-primary font-semibold text-sm md:text-base">←</span>
-          <span className="text-foreground font-medium text-xs md:text-sm">
-            <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
-            <span className="sm:hidden">{t('ui.back')}</span>
-          </span>
-        </button>
+        <>
+          <button 
+            onClick={handleBackClick}
+            className="absolute top-4 left-4 z-10 bg-card rounded-gradeaid p-2 md:p-3 shadow-gradeaid border-l-[4px] md:border-l-[6px] border-b-[4px] md:border-b-[6px] border-foreground hover:bg-card/90 transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap touch-manipulation"
+          >
+            <span className="text-primary font-semibold text-sm md:text-base">←</span>
+            <span className="text-foreground font-medium text-xs md:text-sm">
+              <span className="hidden sm:inline">{t('ui.back_to_castle')}</span>
+              <span className="sm:hidden">{t('ui.back')}</span>
+            </span>
+          </button>
+          
+          {/* Color picker when a shape is isolated */}
+          {isolatedSlot && (
+            <ColorPicker 
+              selectedColor={isolatedSlot.color || '#888888'} 
+              onColorSelect={handleColorSelect}
+            />
+          )}
+        </>
       )}
       
       <Canvas>

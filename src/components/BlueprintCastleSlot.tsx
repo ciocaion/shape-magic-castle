@@ -172,6 +172,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             size={slot.size || 'medium'}
             is3D={true}
             isDropped={true}
+            color={slot.color}
           />
         </div>
         {/* Control buttons - only show on hover and not when dragging */}
@@ -241,6 +242,7 @@ export const BlueprintCastleSlot: React.FC<BlueprintCastleSlotProps> = ({
             size={slot.size || 'medium'}
             is3D={true}
             isDropped={true}
+            color={slot.color}
           />
         </div>
       </div>

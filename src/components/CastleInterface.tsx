@@ -14,6 +14,7 @@ interface CastleInterfaceProps {
   isExploreMode?: boolean;
   isCompleted?: boolean;
   onStartExplore?: () => void;
+  onColorChange?: (slotId: string, color: string) => void;
 }
 
 export const CastleInterface: React.FC<CastleInterfaceProps> = ({ 
@@ -25,7 +26,8 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
   onExploreShapeRotated,
   isExploreMode = false,
   isCompleted = false,
-  onStartExplore
+  onStartExplore,
+  onColorChange
 }) => {
   const [dragError, setDragError] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
@@ -162,7 +164,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       >
         {view3D ? (
           /* 3D Scene View - show explore shapes in explore mode, blueprint shapes otherwise */
-          <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} />
+          <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} onColorChange={onColorChange} />
         ) : (
           /* Blueprint View */
           <>

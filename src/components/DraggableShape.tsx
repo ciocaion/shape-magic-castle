@@ -9,6 +9,7 @@ interface DraggableShapeProps {
   is3D?: boolean;
   isDropped?: boolean;
   onClick?: () => void;
+  color?: string;
 }
 
 export const DraggableShape: React.FC<DraggableShapeProps> = ({
@@ -17,9 +18,22 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
   size = 'medium',
   is3D = false,
   isDropped = false,
-  onClick
+  onClick,
+  color
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+
+  // Default colors if not specified
+  const defaultColors: Record<ShapeType, string> = {
+    square: 'hsl(var(--shape-square))',
+    rectangle: 'hsl(var(--shape-rectangle))',
+    triangle: 'hsl(var(--shape-triangle))',
+    circle: 'hsl(var(--shape-circle))',
+    pentagon: 'hsl(var(--shape-star))',
+    hexagon: 'hsl(var(--shape-heart))',
+  };
+
+  const shapeColor = color || defaultColors[type];
 
   const sizeClasses = {
     small: type === 'rectangle' ? 'w-[16px] h-[64px]' : 'w-[32px] h-[32px]', // thin and tall for tree trunk, normal for others
@@ -27,14 +41,6 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
     large: 'w-[80px] h-[80px]' // significantly bigger for castle base
   };
 
-  const shapeColors = {
-    square: 'bg-shape-square',
-    rectangle: 'bg-shape-rectangle', 
-    triangle: '',
-    circle: 'bg-shape-circle',
-    pentagon: '',
-    hexagon: ''
-  };
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
@@ -58,18 +64,19 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
       case 'square':
         return (
           <div
-            className={`${baseClasses} ${shapeColors[type]}`}
+            className={baseClasses}
             aria-label="Square shape"
-            style={{ aspectRatio: '1 / 1', borderRadius: '0.25rem' }}
+            style={{ aspectRatio: '1 / 1', borderRadius: '0.25rem', backgroundColor: shapeColor }}
           />
         );
       case 'rectangle':
         return (
           <div
-            className={`${baseClasses} ${shapeColors[type]}`}
+            className={baseClasses}
             aria-label="Rectangle shape"
             style={{ 
-              borderRadius: '0.25rem' 
+              borderRadius: '0.25rem',
+              backgroundColor: shapeColor
             }}
           />
         );
@@ -81,7 +88,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             aria-label="Triangle shape"
             style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,0 100,86.6 0,86.6" fill="hsl(var(--shape-triangle))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
+            <polygon points="50,0 100,86.6 0,86.6" fill={shapeColor} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'circle':
@@ -92,7 +99,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             aria-label="Circle shape"
             style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <circle cx="50" cy="50" r="50" fill="hsl(var(--shape-circle))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
+            <circle cx="50" cy="50" r="50" fill={shapeColor} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'pentagon':
@@ -103,7 +110,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             aria-label="Pentagon shape"
             style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,5 95,38 77,90 23,90 5,38" fill="hsl(var(--shape-star))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
+            <polygon points="50,5 95,38 77,90 23,90 5,38" fill={shapeColor} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       case 'hexagon':
@@ -114,7 +121,7 @@ export const DraggableShape: React.FC<DraggableShapeProps> = ({
             aria-label="Hexagon shape"
             style={{ background: 'transparent', overflow: 'visible' }}
           >
-            <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="hsl(var(--shape-heart))" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
+            <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill={shapeColor} style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
           </svg>
         );
       
