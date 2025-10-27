@@ -162,19 +162,7 @@ export const CastleInterface: React.FC<CastleInterfaceProps> = ({
       >
         {view3D ? (
           /* 3D Scene View - show explore shapes in explore mode, blueprint shapes otherwise */
-          <div className="relative w-full h-full">
-            <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} />
-            <div className="absolute top-1 left-1 md:top-2 md:left-2 lg:top-4 lg:left-4 px-2 py-1 md:px-3 md:py-2 lg:px-4 lg:py-2 bg-cyan-400/20 rounded border border-cyan-400/40">
-              <span className="text-cyan-300 font-mono text-xs md:text-sm tracking-wider">
-                <span className="hidden sm:inline">
-                  {isExploreMode ? t('ui.view_label_3d_explore') : t('ui.view_label_3d_castle')}
-                </span>
-                <span className="sm:hidden">
-                  {isExploreMode ? t('ui.view_label_3d_explore_short') : t('ui.view_label_3d_castle_short')}
-                </span>
-              </span>
-            </div>
-          </div>
+          <ThreeDCastleScene slots={isExploreMode ? exploreSlots : blueprintSlots} />
         ) : (
           /* Blueprint View */
           <>
