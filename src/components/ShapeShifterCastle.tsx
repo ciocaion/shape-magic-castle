@@ -23,7 +23,6 @@ export interface CastleSlot {
   showSymmetry: boolean;
   isExploreMode?: boolean;
   rotation?: number;
-  colorIndex?: number;
 }
 
 export interface GameState {
@@ -149,22 +148,14 @@ export const ShapeShifterCastle: React.FC = () => {
     setShowBlueprintSelector(true);
   };
 
-  // Prepare slots for rendering with color indices based on shape type occurrence
-  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => {
-    // Count how many shapes of the same type have been placed before this one
-    const sameTypeBefore = blueprintSequence
-      .slice(0, idx)
-      .filter(s => s.type === slot.type).length;
-    
-    return {
-      ...slot,
-      filled: !!filledSlots[slot.id],
-      active: idx === currentStep && !showBlueprintSelector,
-      locked: idx < currentStep,
-      showSymmetry: false,
-      colorIndex: sameTypeBefore,
-    };
-  });
+  // Prepare slots for rendering
+  const slots: CastleSlot[] = blueprintSequence.map((slot, idx) => ({
+    ...slot,
+    filled: !!filledSlots[slot.id],
+    active: idx === currentStep && !showBlueprintSelector,
+    locked: idx < currentStep,
+    showSymmetry: false,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-blueprint flex flex-col relative overflow-hidden">

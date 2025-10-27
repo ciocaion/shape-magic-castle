@@ -6,7 +6,6 @@ import { OrbitControls, Text, Html, OrthographicCamera } from '@react-three/drei
 import * as THREE from 'three';
 import type { CastleSlot as CastleSlotType } from './ShapeShifterCastle';
 import { tutorService } from '../services/tutorService';
-import { getShapeColor } from '../lib/shapeColors';
 
 const PX_PER_UNIT = 100;
 
@@ -93,15 +92,12 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
   const hWorld = dimsPx.h / PX_PER_UNIT;
   const depth = Math.max(0.12, Math.min(0.24, Math.min(wWorld, hWorld) * 0.3));
 
-  // Get matching color from shared color system
-  const color = getShapeColor(slot.type, slot.colorIndex || 0);
-
   switch (slot.type) {
     case 'triangle': {
       return (
         <>
           <coneGeometry args={[wWorld / 2, hWorld, 3]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#10b981" />
         </>
       );
     }
@@ -109,7 +105,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <sphereGeometry args={[wWorld / 2, 32, 32]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#fbbf24" />
         </>
       );
     }
@@ -117,7 +113,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <boxGeometry args={[wWorld, hWorld, depth]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#ef4444" />
         </>
       );
     }
@@ -125,7 +121,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 5]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#22c55e" />
         </>
       );
     }
@@ -133,7 +129,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <cylinderGeometry args={[wWorld / 2, wWorld / 2, hWorld, 6]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#ec4899" />
         </>
       );
     }
@@ -141,7 +137,7 @@ const getShape3DGeometry = (slot: CastleSlotType) => {
       return (
         <>
           <boxGeometry args={[wWorld, hWorld, depth]} />
-          <meshStandardMaterial color={color} />
+          <meshStandardMaterial color="#8b5cf6" />
         </>
       );
     }
