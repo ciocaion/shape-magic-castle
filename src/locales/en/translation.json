@@ -48,7 +48,7 @@
   }
   ,
   "ui": {
-    "back_to_castle": "Back to Castle View",
+    "back_to_castle": "Back to shapes",
     "back": "Back",
     "no_shapes_long": "No shapes placed yet! Switch to Blueprint view and place shapes to see them here.",
     "no_shapes_short": "No shapes yet! Use Blueprint view to place shapes.",

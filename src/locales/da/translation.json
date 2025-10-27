@@ -48,7 +48,7 @@
   }
   ,
   "ui": {
-    "back_to_castle": "Tilbage til slotsvisning",
+    "back_to_castle": "Tilbage til former",
     "back": "Tilbage",
     "no_shapes_long": "Ingen former endnu! Skift til Blueprint-visning og placer former for at se dem her.",
     "no_shapes_short": "Ingen former endnu! Brug Blueprint-visning.",
